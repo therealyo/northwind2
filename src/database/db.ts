@@ -5,7 +5,7 @@ dotenv.config();
 
 // export const connection = async () =>
 
-export const db = drizzle.connect({
+export const connection = drizzle.connect({
     host: process.env.POSTGRES_HOST,
     password: process.env.POSTGRES_PASSWORD,
     user: 'root',
