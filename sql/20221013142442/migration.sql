@@ -36,9 +36,10 @@ CREATE TABLE IF NOT EXISTS Employees (
 	"Region" character varying(100),
 	"PostalCode" character varying(100),
 	"Country" character varying(100),
-	"homePhone" character varying(100),
+	"HomePhone" character varying(100),
 	"Extension" INT,
-	"Notes" character varying(500)
+	"Notes" character varying(500),
+	"ReportsTo" INT
 );
 
 CREATE TABLE IF NOT EXISTS OrderDetails (

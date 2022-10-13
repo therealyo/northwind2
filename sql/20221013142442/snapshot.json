@@ -190,8 +190,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "homePhone": {
-          "name": "homePhone",
+        "HomePhone": {
+          "name": "HomePhone",
           "type": "character varying(100)",
           "primaryKey": false,
           "notNull": false
@@ -205,6 +205,12 @@
         "Notes": {
           "name": "Notes",
           "type": "character varying(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ReportsTo": {
+          "name": "ReportsTo",
+          "type": "INT",
           "primaryKey": false,
           "notNull": false
         }

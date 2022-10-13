@@ -1,8 +1,9 @@
-import { ApiError } from './../errors/ApiError';
 import { DB } from 'drizzle-orm';
 import { NextFunction, Request, Response, Router } from 'express';
-import { CustomerService } from '../services/customers.service';
+
+import { ApiError } from './../errors/ApiError';
 import { Controller } from './../interfaces/IController';
+import { CustomerService } from './../services';
 
 export class CustomerController implements Controller {
     public router = Router();

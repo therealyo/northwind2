@@ -42,9 +42,10 @@ export class EmployeesTable extends AbstractTable<EmployeesTable> {
     public Region = this.varchar('Region', { size: 100 });
     public PostalCode = this.varchar('PostalCode', { size: 100 });
     public Country = this.varchar('Country', { size: 100 });
-    public HomePhone = this.varchar('homePhone', { size: 100 });
+    public HomePhone = this.varchar('HomePhone', { size: 100 });
     public Extension = this.int('Extension');
     public Notes = this.varchar('Notes', { size: 500 });
+    public ReportsTo = this.int('ReportsTo');
 
     public tableName(): string {
         return 'Employees';

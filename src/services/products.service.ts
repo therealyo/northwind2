@@ -1,3 +1,4 @@
+import { SuppliersTable } from './../data/schema';
 import { DB, eq } from 'drizzle-orm';
 import { Product, ProductsTable } from '../data/schema';
 import { PageResponse } from '../types/PageResponse';
@@ -17,8 +18,16 @@ export class ProductService {
         this.table.withLogger(this.logger);
     }
 
-    getProductInfo = async (id: number): Promise<Product[]> => {
-        return await this.table!.select().where(eq(this.table!.ProductID, id)).execute();
+    getProductInfo = async (id: number) => {
+        const suppliers = new SuppliersTable(this.db);
+        const data = await this.table!.select()
+            .leftJoin(suppliers, (products, suppliers) => eq(products.SupplierID, suppliers.SupplierID))
+            .where((products, suppliers) => eq(products.ProductID, id))
+            .execute();
+
+        return data.map((product, supplier) => {
+            return { ...product, Supplier: supplier.CompanyName };
+        });
     };
 
     getProductsPage = async (page: number): Promise<PageResponse<Product>> => {

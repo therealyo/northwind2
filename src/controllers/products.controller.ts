@@ -1,7 +1,8 @@
-import { ProductService } from './../services/products.service';
-import { Controller } from './../interfaces/IController';
-import { NextFunction, Request, Response, Router } from 'express';
 import { DB } from 'drizzle-orm';
+import { NextFunction, Request, Response, Router } from 'express';
+
+import { ProductService } from './../services/';
+import { Controller } from './../interfaces/IController';
 
 export class ProductController implements Controller {
     public router = Router();

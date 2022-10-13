@@ -1,6 +1,7 @@
 import { DB } from 'drizzle-orm';
 import { NextFunction, Request, Response, Router } from 'express';
-import { SuppliersService } from '../services/suppliers.service';
+
+import { SupplierService } from './../services';
 import { Controller } from './../interfaces/IController';
 
 export class SuppliersController implements Controller {
@@ -8,7 +9,7 @@ export class SuppliersController implements Controller {
     private service;
 
     constructor(db: DB) {
-        this.service = new SuppliersService(db);
+        this.service = new SupplierService(db);
         this.initRoutes();
     }
 

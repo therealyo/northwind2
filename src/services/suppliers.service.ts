@@ -4,7 +4,7 @@ import { Supplier, SuppliersTable } from './../data/schema';
 import { QueryLogger } from '../utils/QueryLogger';
 import { PageResponse } from '../types/PageResponse';
 
-export class SuppliersService {
+export class SupplierService {
     public pageSize: number = 20;
     public logger: QueryLogger;
     private table?: SuppliersTable;
