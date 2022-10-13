@@ -1,10 +1,8 @@
-import { ProductsTable, ShippersTable } from './../data/schema';
 import { DB, eq, ExtractModel, JoinBuilderResponses } from 'drizzle-orm';
 
-import { Order, OrderDetailsTable, OrdersTable } from '../data/schema';
-import { PageResponse } from '../types/PageResponse';
-import { QueryLogger } from '../utils/QueryLogger';
 import { BaseService } from '../types/BaseService';
+import { PageResponse } from '../types/PageResponse';
+import { Order, OrderDetailsTable, OrdersTable, ProductsTable, ShippersTable } from '../data/schema';
 
 export class OrderService extends BaseService {
     private ordersTable?: OrdersTable;
@@ -17,7 +15,7 @@ export class OrderService extends BaseService {
         this.initTables(db);
     }
 
-    private initTables = (db: DB) => {
+    private initTables = (db: DB): void => {
         this.ordersTable = new OrdersTable(db);
         this.detailsTable = new OrderDetailsTable(db);
         this.shippersTable = new ShippersTable(db);
@@ -66,7 +64,13 @@ export class OrderService extends BaseService {
             .where((products, details) => eq(details.OrderID, id))
             .execute();
 
-        return { ...this.mapOrderInfo(orderInfo), Products: this.mapProductsInfo(productsInfo) };
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: {
+                ...this.mapOrderInfo(orderInfo),
+                Products: this.mapProductsInfo(productsInfo)
+            }
+        };
     };
 
     getOrdersPage = async (page: number): Promise<PageResponse<Order>> => {
@@ -76,12 +80,17 @@ export class OrderService extends BaseService {
         const pageData = await this.db
             .session()
             .execute(
-                'SELECT  \
-        SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS TotalPrice, SUM(OrderDetails."Quantity") AS TotalQuantity, COUNT(OrderDetails."OrderID") AS TotalProducts \
-        , Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate", Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity" FROM Orders \
-         LEFT JOIN OrderDetails ON Orders."OrderID" = OrderDetails."OrderID" GROUP BY Orders."OrderID" ORDER BY Orders."OrderID" LIMIT 20 OFFSET 0'
+                'SELECT SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS TotalPrice, SUM(OrderDetails."Quantity") AS TotalQuantity, COUNT(OrderDetails."OrderID") AS TotalProducts \
+                , Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate", Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity" FROM Orders \
+                LEFT JOIN OrderDetails ON Orders."OrderID" = OrderDetails."OrderID" GROUP BY Orders."OrderID" ORDER BY Orders."OrderID" LIMIT 20 OFFSET 0'
             );
 
-        return { count, page: pageData.rows };
+        this.logger.addQuery(
+            'SELECT SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS TotalPrice, SUM(OrderDetails."Quantity") AS TotalQuantity, COUNT(OrderDetails."OrderID") AS TotalProducts \
+            , Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate", Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity" FROM Orders \
+            LEFT JOIN OrderDetails ON Orders."OrderID" = OrderDetails."OrderID" GROUP BY Orders."OrderID" ORDER BY Orders."OrderID" LIMIT 20 OFFSET 0'
+        );
+
+        return { queries: this.logger.retrieveQueries(), count, page: pageData.rows };
     };
 }

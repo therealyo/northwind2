@@ -1,4 +1,8 @@
+import fs from 'fs/promises';
+import csvtojson from 'csvtojson';
+import * as dotenv from 'dotenv';
 import { drizzle } from 'drizzle-orm';
+
 import {
     CategoriesTable,
     EmployeeTerritoriesTable,
@@ -12,9 +16,6 @@ import {
     SuppliersTable,
     OrdersTable
 } from './../data/schema';
-import fs from 'fs/promises';
-import csvtojson from 'csvtojson';
-import * as dotenv from 'dotenv';
 
 dotenv.config();
 

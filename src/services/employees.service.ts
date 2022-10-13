@@ -1,8 +1,10 @@
+import { ItemInfo } from './../types/ItemInfo';
 import { DB, eq } from 'drizzle-orm';
 
 import { PageResponse } from '../types/PageResponse';
-import { Employee, EmployeesTable } from './../data/schema';
 import { BaseService } from './../types/BaseService';
+import { Employee, EmployeesTable } from './../data/schema';
+
 export class EmployeeService extends BaseService {
     private employeesTable?: EmployeesTable;
 
@@ -11,33 +13,38 @@ export class EmployeeService extends BaseService {
         this.initTables(db);
     }
 
-    private initTables = (db: DB) => {
+    private initTables = (db: DB): void => {
         this.employeesTable = new EmployeesTable(db);
         this.employeesTable.withLogger(this.logger);
     };
 
-    getEmployeeInfo = async (id: number) => {
+    getEmployeeInfo = async (id: number): Promise<ItemInfo<Employee>> => {
         const data = await this.employeesTable!.select()
             .leftJoin(this.employeesTable!, (employees, joined) => eq(employees.ReportsTo, joined.EmployeeID))
             .where((employees, joined) => eq(employees.EmployeeID, id))
             .execute();
 
-        console.log(data);
-
-        return data.map((employee, joined) => {
+        const employeeInfo = data.map((employee, joined) => {
             return { ...employee, ReportsTo: `${joined.FirstName} ${joined.LastName}` };
-        })[0];
+        })[0] as Employee & { ReportsTo: string };
+
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: employeeInfo
+        };
     };
 
     getEmployeesPage = async (page: number): Promise<PageResponse<Employee>> => {
         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM employees');
         const count = rows[0].count;
 
+        this.logger.addQuery('SELECT COUNT(*) FROM employees');
+
         const pageData: Employee[] = await this.employeesTable!.select()
             .limit(this.pageSize)
             .offset((page - 1) * this.pageSize)
             .execute();
 
-        return { count, page: pageData };
+        return { queries: this.logger.retrieveQueries(), count, page: pageData };
     };
 }
