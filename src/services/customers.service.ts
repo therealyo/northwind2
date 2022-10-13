@@ -18,8 +18,8 @@ export class CustomerService {
         this.table.withLogger(this.logger);
     }
 
-    getCustomerInfo = async (id: string): Promise<Customer[]> => {
-        return await this.table!.select().where(eq(this.table!.CustomerID, id)).execute();
+    getCustomerInfo = async (id: string) => {
+        return (await this.table!.select().where(eq(this.table!.CustomerID, id)).execute())[0];
     };
 
     getCustomersPage = async (page: number): Promise<PageResponse<Customer>> => {
@@ -31,6 +31,6 @@ export class CustomerService {
             .offset((page - 1) * this.pageSize)
             .execute();
 
-        return { count, pageData };
+        return { count, page: pageData };
     };
 }

@@ -18,8 +18,8 @@ export class SupplierService {
         this.table.withLogger(this.logger);
     }
 
-    async getSupplierInfo(id: number): Promise<Supplier[]> {
-        return await this.table!.select().where(eq(this.table!.SupplierID, id)).execute();
+    async getSupplierInfo(id: number) {
+        return (await this.table!.select().where(eq(this.table!.SupplierID, id)).execute())[0];
     }
 
     getSuppliersPage = async (page: number): Promise<PageResponse<Supplier>> => {
@@ -31,6 +31,6 @@ export class SupplierService {
             .offset((page - 1) * this.pageSize)
             .execute();
 
-        return { count, pageData };
+        return { count, page: pageData };
     };
 }

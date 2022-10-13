@@ -22,9 +22,11 @@ export class EmployeeService {
             .where((employees, joined) => eq(employees.EmployeeID, id))
             .execute();
 
+        console.log(data);
+
         return data.map((employee, joined) => {
             return { ...employee, ReportsTo: `${joined.FirstName} ${joined.LastName}` };
-        });
+        })[0];
     };
 
     getEmployeesPage = async (page: number): Promise<PageResponse<Employee>> => {
@@ -36,6 +38,6 @@ export class EmployeeService {
             .offset((page - 1) * this.pageSize)
             .execute();
 
-        return { count, pageData };
+        return { count, page: pageData };
     };
 }

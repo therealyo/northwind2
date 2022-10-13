@@ -27,7 +27,7 @@ export class ProductService {
 
         return data.map((product, supplier) => {
             return { ...product, Supplier: supplier.CompanyName };
-        });
+        })[0];
     };
 
     getProductsPage = async (page: number): Promise<PageResponse<Product>> => {
@@ -39,6 +39,6 @@ export class ProductService {
             .offset((page - 1) * this.pageSize)
             .execute();
 
-        return { count, pageData };
+        return { count, page: pageData };
     };
 }

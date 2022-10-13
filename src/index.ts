@@ -1,5 +1,5 @@
-import { EmployeesTable } from './data/schema';
-import { drizzle } from 'drizzle-orm';
+import { EmployeesTable, OrdersTable, OrderDetailsTable, ShippersTable, ProductsTable } from './data/schema';
+import { drizzle, eq, or } from 'drizzle-orm';
 
 import * as dotenv from 'dotenv';
 
@@ -14,28 +14,43 @@ const main = async () => {
         database: process.env.POSTGRES_DB
     });
 
-    const table = new EmployeesTable(db);
+    const orders = new OrdersTable(db);
+    const details = new OrderDetailsTable(db);
+    const shippers = new ShippersTable(db);
+    const products = new ProductsTable(db);
 
-    await table
-        .insert({
-            EmployeeID: 1,
-            LastName: '1',
-            FirstName: '1',
-            Title: '1',
-            TitleOfCourtesy: '1',
-            BirthDate: '1',
-            HireDate: '1',
-            Address: '1',
-            City: '1',
-            Region: '1',
-            PostalCode: '1',
-            Country: '1',
-            HomePhone: '1',
-            Extension: 1,
-            Notes: '1',
-            ReportsTo: null
-        })
+    const orderInfo = await orders
+        .select()
+        .leftJoin(details, (orders, details) => eq(orders.OrderID, details.OrderID))
+        .leftJoin(shippers, (orders, details, shippers) => eq(orders.ShipVia, shippers.ShipperID))
+        .where((orders, details) => eq(orders.OrderID, 10248))
         .execute();
+
+    const productsInfo = await details
+        .select()
+        .leftJoin(products, (details, products) => eq(details.ProductID, products.ProductID))
+        .where((details, products) => eq(details.OrderID, 10248))
+        .execute();
+
+    console.log(
+        orderInfo
+            .map((order, detail, shipper) => {
+                return { ...order, TotalPrice: detail.UnitPrice! * detail.Quantity!, ShipVia: shipper.CompanyName };
+            })
+            .reduce((a, b) => ({ ...a, TotalPrice: a.TotalPrice + b.TotalPrice }))
+    );
+    console.log(
+        productsInfo.map((detail, order) => {
+            return {
+                ...order,
+                OrderID: detail.OrderID,
+                Quantity: detail.Quantity,
+                OrderPrice: detail.UnitPrice,
+                TotalPrice: detail.Quantity! * detail.UnitPrice!,
+                Discount: detail.Discount
+            };
+        })
+    );
 };
 
 main();

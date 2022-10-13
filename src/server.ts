@@ -1,3 +1,4 @@
+import { OrderController } from './controllers/orders.controller';
 import dotenv from 'dotenv';
 
 import App from './app';
@@ -16,7 +17,8 @@ const start = async () => {
             new SuppliersController(db),
             new CustomerController(db),
             new ProductController(db),
-            new EmployeeController(db)
+            new EmployeeController(db),
+            new OrderController(db)
         ],
         process.env.PORT
     );
