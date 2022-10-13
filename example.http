@@ -1,0 +1,29 @@
+GET http://localhost:3000/suppliers?page=1 HTTP/1.1
+###
+
+GET http://localhost:3000/supplier?id=1 HTTP/1.1
+###
+
+GET http://localhost:3000/customers?page=1 HTTP/1.1
+###
+
+GET http://localhost:3000/customer?id=ALFKI HTTP/1.1
+###
+
+GET http://localhost:3000/products?page=1 HTTP/1.1
+###
+
+GET http://localhost:3000/product?id=1 HTTP/1.1
+###
+
+GET http://localhost:3000/employees?page=1 HTTP/1.1
+###
+
+GET http://localhost:3000/employee?id=1 HTTP/1.1
+###
+
+GET http://localhost:3000/orders?page=1 HTTP/1.1
+###
+
+GET http://localhost:3000/order?id=10248 HTTP/1.1
+

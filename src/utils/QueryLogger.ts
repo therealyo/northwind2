@@ -13,7 +13,6 @@ export class QueryLogger extends BaseLogger {
 
     info = (msg: string): void => {
         const parsed = this.parseQuery(msg);
-        console.log(parsed);
         if (!this.isEmptyString(parsed)) {
             this.queries.push(parsed);
         }
