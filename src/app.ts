@@ -1,4 +1,16 @@
-import { CategoriesTable, Category } from './data/categories';
+import {
+    CategoriesTable,
+    EmployeeTerritoriesTable,
+    CustomersTable,
+    EmployeesTable,
+    OrderDetailsTable,
+    OrdersTable,
+    ProductsTable,
+    RegionsTable,
+    ShippersTable,
+    SuppliersTable,
+    TerritoriesTable
+} from './data/schema';
 import { drizzle, eq } from 'drizzle-orm';
 import * as dotenv from 'dotenv';
 import BaseLogger from 'drizzle-orm/logger/abstractLogger';
@@ -28,11 +40,39 @@ const main = async () => {
 
     const categoriesTable = new CategoriesTable(db);
     const testLogger = new WriteLogger();
-    categoriesTable.withLogger(testLogger);
-    console.log(await categoriesTable.select().where(eq(categoriesTable.categoryId, 1)).execute());
+    categoriesTable.withLogger(console);
+    const mapping = {
+        Categories: new CategoriesTable(db),
+        EmployeeTerritories: new EmployeeTerritoriesTable(db),
+        Customers: new CustomersTable(db),
+        Employees: new EmployeesTable(db),
+        Territories: new TerritoriesTable(db),
+        Regions: new RegionsTable(db),
+        Shippers: new ShippersTable(db),
+        Products: new ProductsTable(db),
+        OrderDetails: new OrderDetailsTable(db),
+        Suppliers: new SuppliersTable(db),
+        Orders: new OrdersTable(db)
+    };
+    // console.log(mapping['Categories']);
+    const categories = mapping['Categories'];
 
+    const testValues = [
+        {
+            CategoryId: '6',
+            CategoryName: 'test',
+            Description: 'test'
+        },
+        {
+            CategoryId: '5',
+            CategoryName: 'test',
+            Description: 'test'
+        }
+    ];
+    console.log(testValues);
+
+    await categories.insertMany(testValues).execute();
     // console.log(testLogger);
-    // console.log(await categoriesTable.select().execute());
 };
 
 main();
