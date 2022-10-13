@@ -6,7 +6,7 @@ import { Controller } from './../interfaces/IController';
 
 export class SuppliersController implements Controller {
     public router = Router();
-    private service;
+    private service: SupplierService;
 
     constructor(db: DB) {
         this.service = new SupplierService(db);

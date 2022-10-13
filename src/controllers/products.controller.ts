@@ -6,14 +6,14 @@ import { Controller } from './../interfaces/IController';
 
 export class ProductController implements Controller {
     public router = Router();
-    private service;
+    private service: ProductService;
 
     constructor(db: DB) {
         this.service = new ProductService(db);
         this.initRoutes();
     }
 
-    private initRoutes = () => {
+    private initRoutes = (): void => {
         this.router.get('/product', this.getProductInfo);
         this.router.get('/products', this.getProductsPage);
     };

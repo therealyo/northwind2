@@ -1,33 +1,33 @@
-import { Customer } from './../data/schema';
 import { DB, eq } from 'drizzle-orm';
-import { CustomersTable } from '../data/schema';
-import { QueryLogger } from '../utils/QueryLogger';
-import { PageResponse } from '../types/PageResponse';
 
-export class CustomerService {
-    public pageSize: number = 20;
-    public logger: QueryLogger;
-    private table?: CustomersTable;
-    private db: DB;
+import { CustomersTable } from '../data/schema';
+import { PageResponse } from '../types/PageResponse';
+import { BaseService } from './../types/BaseService';
+import { Customer } from './../data/schema';
+
+export class CustomerService extends BaseService {
+    private customersTable?: CustomersTable;
 
     constructor(db: DB) {
-        this.logger = new QueryLogger();
-        this.db = db;
-        this.table = new CustomersTable(db);
-
-        this.table.withLogger(this.logger);
+        super(db);
+        this.initTables(db);
     }
 
+    private initTables = (db: DB) => {
+        this.customersTable = new CustomersTable(db);
+        this.customersTable.withLogger(this.logger);
+    };
+
     getCustomerInfo = async (id: string) => {
-        return (await this.table!.select().where(eq(this.table!.CustomerID, id)).execute())[0];
+        return (await this.customersTable!.select().where(eq(this.customersTable!.CustomerID, id)).execute())[0];
     };
 
     getCustomersPage = async (page: number): Promise<PageResponse<Customer>> => {
         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM customers');
         const count = rows[0].count;
 
-        const pageData: Customer[] = await this.table!.select()
-            .limit(20)
+        const pageData: Customer[] = await this.customersTable!.select()
+            .limit(this.pageSize)
             .offset((page - 1) * this.pageSize)
             .execute();
 

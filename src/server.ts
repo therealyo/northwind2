@@ -1,17 +1,20 @@
-import { OrderController } from './controllers/orders.controller';
 import dotenv from 'dotenv';
+dotenv.config();
 
 import App from './app';
 import { connection } from './database/db';
-import { ProductController, CustomerController, SuppliersController, EmployeeController } from './controllers';
-// import { SuppliersController } from './controllers/suppliers.controller';
-// import { ProductController } from './controllers/products.controller';
-// import { CustomerController } from './controllers/customer.controller';
-
-dotenv.config();
+import { QueryLogger } from './utils/QueryLogger';
+import {
+    ProductController,
+    CustomerController,
+    SuppliersController,
+    EmployeeController,
+    OrderController
+} from './controllers';
 
 const start = async () => {
     const db = await connection;
+    // db.useLogger(new QueryLogger());
     const app = new App(
         [
             new SuppliersController(db),
@@ -22,13 +25,8 @@ const start = async () => {
         ],
         process.env.PORT
     );
-    return app.listen();
+
+    app.listen();
 };
 
-start()
-    .then((res) => {
-        console.log(res);
-    })
-    .catch((err) => {
-        console.log(err);
-    });
+start();

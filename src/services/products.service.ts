@@ -1,26 +1,27 @@
+import { BaseService } from './../types/BaseService';
 import { SuppliersTable } from './../data/schema';
 import { DB, eq } from 'drizzle-orm';
 import { Product, ProductsTable } from '../data/schema';
 import { PageResponse } from '../types/PageResponse';
 import { QueryLogger } from '../utils/QueryLogger';
 
-export class ProductService {
-    public pageSize: number = 20;
-    public logger: QueryLogger;
-    private table?: ProductsTable;
-    private db: DB;
+export class ProductService extends BaseService {
+    private productsTable?: ProductsTable;
 
     constructor(db: DB) {
-        this.logger = new QueryLogger();
-        this.db = db;
-        this.table = new ProductsTable(db);
+        super(db);
 
-        this.table.withLogger(this.logger);
+        this.initTables(db);
     }
+
+    private initTables = (db: DB) => {
+        this.productsTable = new ProductsTable(db);
+        this.productsTable.withLogger(this.logger);
+    };
 
     getProductInfo = async (id: number) => {
         const suppliers = new SuppliersTable(this.db);
-        const data = await this.table!.select()
+        const data = await this.productsTable!.select()
             .leftJoin(suppliers, (products, suppliers) => eq(products.SupplierID, suppliers.SupplierID))
             .where((products, suppliers) => eq(products.ProductID, id))
             .execute();
@@ -34,8 +35,8 @@ export class ProductService {
         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM Products');
         const count = rows[0].count;
 
-        const pageData: Product[] = await this.table!.select()
-            .limit(20)
+        const pageData: Product[] = await this.productsTable!.select()
+            .limit(this.pageSize)
             .offset((page - 1) * this.pageSize)
             .execute();
 

@@ -6,7 +6,7 @@ import { Controller } from './../interfaces/IController';
 
 export class EmployeeController implements Controller {
     public router = Router();
-    private service;
+    private service: EmployeeService;
 
     constructor(db: DB) {
         this.service = new EmployeeService(db);

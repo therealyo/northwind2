@@ -7,7 +7,7 @@ import { CustomerService } from './../services';
 
 export class CustomerController implements Controller {
     public router = Router();
-    private service;
+    private service: CustomerService;
 
     constructor(db: DB) {
         this.service = new CustomerService(db);

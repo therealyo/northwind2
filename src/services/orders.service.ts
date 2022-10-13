@@ -4,20 +4,16 @@ import { DB, eq, ExtractModel, JoinBuilderResponses } from 'drizzle-orm';
 import { Order, OrderDetailsTable, OrdersTable } from '../data/schema';
 import { PageResponse } from '../types/PageResponse';
 import { QueryLogger } from '../utils/QueryLogger';
+import { BaseService } from '../types/BaseService';
 
-export class OrderService {
-    public pageSize: number = 20;
-    public logger: QueryLogger;
+export class OrderService extends BaseService {
     private ordersTable?: OrdersTable;
     private detailsTable?: OrderDetailsTable;
     private shippersTable?: ShippersTable;
     private productsTable?: ProductsTable;
-    private db: DB;
 
     constructor(db: DB) {
-        this.logger = new QueryLogger();
-        this.db = db;
-
+        super(db);
         this.initTables(db);
     }
 
