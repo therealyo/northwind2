@@ -25,7 +25,10 @@ export class EmployeeService extends BaseService {
             .execute()
 
         const employeeInfo = data.map((employee, joined) => {
-            return { ...employee, ReportsTo: `${joined.FirstName} ${joined.LastName}` }
+            return { 
+                ...employee, 
+                ReportsTo: `${joined.FirstName} ${joined.LastName}` 
+            }
         })[0] as Employee & { ReportsTo: string }
 
         return {
@@ -45,6 +48,9 @@ export class EmployeeService extends BaseService {
             .offset((page - 1) * this.pageSize)
             .execute()
 
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return { 
+            queries: this.logger.retrieveQueries(), 
+            count, 
+            page: pageData }
     }
 }

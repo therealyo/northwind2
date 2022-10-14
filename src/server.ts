@@ -2,7 +2,6 @@ import dotenv from 'dotenv'
 
 import App from './app'
 import { connection } from './database/db'
-import { QueryLogger } from './utils/QueryLogger'
 import {
     ProductController,
     CustomerController,
@@ -10,6 +9,7 @@ import {
     EmployeeController,
     OrderController
 } from './controllers'
+
 dotenv.config()
 
 const start = async () => {

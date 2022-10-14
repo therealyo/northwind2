@@ -32,9 +32,18 @@ export class OrderService extends BaseService {
     ) => {
         return orderInfo
             .map((order, detail, shipper) => {
-                return { ...order, TotalPrice: detail.UnitPrice! * detail.Quantity!, ShipVia: shipper.CompanyName }
+                // form array of joined order info with separate total price for each order
+                return {
+                    ...order,
+                    TotalPrice: detail.UnitPrice! * detail.Quantity!,
+                    ShipVia: shipper.CompanyName
+                }
             })
-            .reduce((a, b) => ({ ...a, TotalPrice: a.TotalPrice + b.TotalPrice }))
+            .reduce((order, anotherOrder) => ({
+                // count total price of all orders
+                ...order,
+                TotalPrice: order.TotalPrice + anotherOrder.TotalPrice
+            }))
     }
 
     private readonly mapProductsInfo = (
@@ -77,19 +86,22 @@ export class OrderService extends BaseService {
         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM Orders')
         const count = rows[0].count
 
-        const pageData = await this.db
-            .session()
-            .execute(
-                'SELECT SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS TotalPrice, SUM(OrderDetails."Quantity") AS TotalQuantity, COUNT(OrderDetails."OrderID") AS TotalProducts \
-                , Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate", Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity" FROM Orders \
-                LEFT JOIN OrderDetails ON Orders."OrderID" = OrderDetails."OrderID" GROUP BY Orders."OrderID" ORDER BY Orders."OrderID" LIMIT 20 OFFSET 0'
-            )
+        const pageQuery =
+            `SELECT \
+                SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS TotalPrice, \
+                SUM(OrderDetails."Quantity") AS TotalQuantity, COUNT(OrderDetails."OrderID") AS TotalProducts, \
+                Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate",\
+                Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity"\
+            FROM Orders \
+                LEFT JOIN OrderDetails \
+                    ON Orders."OrderID" = OrderDetails."OrderID" \
+                        GROUP BY Orders."OrderID" \
+                        ORDER BY Orders."OrderID" \
+                        LIMIT ${this.pageSize} OFFSET ${(page - 1) * this.pageSize}`
 
-        this.logger.addQuery(
-            'SELECT SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS TotalPrice, SUM(OrderDetails."Quantity") AS TotalQuantity, COUNT(OrderDetails."OrderID") AS TotalProducts \
-            , Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate", Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity" FROM Orders \
-            LEFT JOIN OrderDetails ON Orders."OrderID" = OrderDetails."OrderID" GROUP BY Orders."OrderID" ORDER BY Orders."OrderID" LIMIT 20 OFFSET 0'
-        )
+        const pageData = await this.db.session().execute(pageQuery)
+
+        this.logger.addQuery(pageQuery)
 
         return { queries: this.logger.retrieveQueries(), count, page: pageData.rows }
     }

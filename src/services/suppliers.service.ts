@@ -20,7 +20,10 @@ export class SupplierService extends BaseService {
 
     async getSupplierInfo(id: number): Promise<ItemInfo<Supplier>> {
         const supplierInfo = (
-            await this.suppliersTable!.select().where(eq(this.suppliersTable!.SupplierID, id)).execute()
+            await this.suppliersTable!
+                .select()
+                .where(eq(this.suppliersTable!.SupplierID, id))
+                .execute()
         )[0]
         return {
             queries: this.logger.retrieveQueries(),

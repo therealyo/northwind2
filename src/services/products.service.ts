@@ -7,6 +7,7 @@ import { Product, ProductsTable, SuppliersTable } from '../data/schema'
 
 export class ProductService extends BaseService {
     private productsTable?: ProductsTable
+    private suppliersTable?: SuppliersTable
 
     constructor(db: DB) {
         super(db)
@@ -16,13 +17,15 @@ export class ProductService extends BaseService {
 
     private readonly initTables = (db: DB): void => {
         this.productsTable = new ProductsTable(db)
+        this.suppliersTable = new SuppliersTable(this.db)
+
         this.productsTable.withLogger(this.logger)
     }
 
     getProductInfo = async (id: number): Promise<ItemInfo<Product>> => {
-        const suppliers = new SuppliersTable(this.db)
+        
         const data = await this.productsTable!.select()
-            .leftJoin(suppliers, (products, suppliers) => eq(products.SupplierID, suppliers.SupplierID))
+            .leftJoin(this.suppliersTable!, (products, suppliers) => eq(products.SupplierID, suppliers.SupplierID))
             .where((products, suppliers) => eq(products.ProductID, id))
             .execute()
 
@@ -47,6 +50,10 @@ export class ProductService extends BaseService {
             .offset((page - 1) * this.pageSize)
             .execute()
 
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return { 
+            queries: this.logger.retrieveQueries(), 
+            count, 
+            page: pageData 
+        }
     }
 }

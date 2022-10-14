@@ -20,7 +20,10 @@ export class CustomerService extends BaseService {
 
     getCustomerInfo = async (id: string): Promise<ItemInfo<Customer>> => {
         const customerInfo: Customer = (
-            await this.customersTable!.select().where(eq(this.customersTable!.CustomerID, id)).execute()
+            await this.customersTable!
+                .select()
+                .where(eq(this.customersTable!.CustomerID, id))
+                .execute()
         )[0]
 
         return {
