@@ -3,6 +3,7 @@ import { NextFunction, Request, Response, Router } from 'express'
 
 import { ProductService } from './../services/'
 import { Controller } from './../interfaces/IController'
+import { singleItemValidation, pageValidation } from '../validation/query.validation'
 
 export class ProductController implements Controller {
     public router = Router()
@@ -14,8 +15,8 @@ export class ProductController implements Controller {
     }
 
     private readonly initRoutes = (): void => {
-        this.router.get('/product', this.getProductInfo)
-        this.router.get('/products', this.getProductsPage)
+        this.router.get('/product', singleItemValidation, this.getProductInfo)
+        this.router.get('/products', pageValidation, this.getProductsPage)
     }
 
     private readonly getProductsPage = async (req: Request, res: Response, next: NextFunction) => {

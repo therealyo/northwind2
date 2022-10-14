@@ -2,6 +2,7 @@ import { DB } from 'drizzle-orm'
 import { Router, Request, Response, NextFunction } from 'express'
 
 import { EmployeeService } from '../services'
+import { singleItemValidation, pageValidation } from '../validation/query.validation'
 import { Controller } from './../interfaces/IController'
 
 export class EmployeeController implements Controller {
@@ -14,8 +15,8 @@ export class EmployeeController implements Controller {
     }
 
     private readonly initRoutes = () => {
-        this.router.get('/employee', this.getEmployeeInfo)
-        this.router.get('/employees', this.getEmployeesPage)
+        this.router.get('/employee',singleItemValidation, this.getEmployeeInfo)
+        this.router.get('/employees',pageValidation, this.getEmployeesPage)
     }
 
     private readonly getEmployeesPage = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,5 +1,7 @@
 import { DB } from 'drizzle-orm'
 import { NextFunction, Request, Response, Router } from 'express'
+import { query } from 'express-validator'
+import { singleItemValidation, pageValidation } from '../validation/query.validation'
 
 import { ApiError } from './../errors/ApiError'
 import { Controller } from './../interfaces/IController'
@@ -15,8 +17,8 @@ export class CustomerController implements Controller {
     }
 
     private readonly initRoutes = () => {
-        this.router.get('/customer', this.getSupplierInfo)
-        this.router.get('/customers', this.getSuppliersPage)
+        this.router.get('/customer', singleItemValidation, this.getSupplierInfo)
+        this.router.get('/customers', pageValidation, this.getSuppliersPage)
     }
 
     private readonly getSuppliersPage = async (req: Request, res: Response, next: NextFunction) => {

@@ -2,6 +2,7 @@ import { DB } from 'drizzle-orm'
 import { Router, Request, Response, NextFunction } from 'express'
 
 import { OrderService } from '../services'
+import { singleItemValidation, pageValidation } from '../validation/query.validation'
 import { Controller } from './../interfaces/IController'
 
 export class OrderController implements Controller {
@@ -14,8 +15,8 @@ export class OrderController implements Controller {
     }
 
     private readonly initRoutes = () => {
-        this.router.get('/order', this.getOrderInfo)
-        this.router.get('/orders', this.getOrdersPage)
+        this.router.get('/order',singleItemValidation, this.getOrderInfo)
+        this.router.get('/orders',pageValidation, this.getOrdersPage)
     }
 
     private readonly getOrdersPage = async (req: Request, res: Response, next: NextFunction) => {
