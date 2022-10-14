@@ -1,44 +1,44 @@
-import { DB, eq } from 'drizzle-orm';
+import { DB, eq } from 'drizzle-orm'
 
-import { ItemInfo } from './../types/ItemInfo';
-import { BaseService } from './../types/BaseService';
-import { PageResponse } from '../types/PageResponse';
-import { Supplier, SuppliersTable } from './../data/schema';
+import { ItemInfo } from './../types/ItemInfo'
+import { BaseService } from './../types/BaseService'
+import { PageResponse } from '../types/PageResponse'
+import { Supplier, SuppliersTable } from './../data/schema'
 
 export class SupplierService extends BaseService {
-    private suppliersTable?: SuppliersTable;
+    private suppliersTable?: SuppliersTable
 
     constructor(db: DB) {
-        super(db);
-        this.initTables(db);
+        super(db)
+        this.initTables(db)
     }
 
-    private initTables = (db: DB): void => {
-        this.suppliersTable = new SuppliersTable(db);
-        this.suppliersTable.withLogger(this.logger);
-    };
+    private readonly initTables = (db: DB): void => {
+        this.suppliersTable = new SuppliersTable(db)
+        this.suppliersTable.withLogger(this.logger)
+    }
 
     async getSupplierInfo(id: number): Promise<ItemInfo<Supplier>> {
         const supplierInfo = (
             await this.suppliersTable!.select().where(eq(this.suppliersTable!.SupplierID, id)).execute()
-        )[0];
+        )[0]
         return {
             queries: this.logger.retrieveQueries(),
             data: supplierInfo
-        };
+        }
     }
 
     getSuppliersPage = async (page: number): Promise<PageResponse<Supplier>> => {
-        const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM suppliers');
-        const count = rows[0].count;
+        const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM suppliers')
+        const count = rows[0].count
 
-        this.logger.addQuery('SELECT COUNT(*) FROM suppliers');
+        this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
 
         const pageData: Supplier[] = await this.suppliersTable!.select()
             .limit(this.pageSize)
             .offset((page - 1) * this.pageSize)
-            .execute();
+            .execute()
 
-        return { queries: this.logger.retrieveQueries(), count, page: pageData };
-    };
+        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+    }
 }

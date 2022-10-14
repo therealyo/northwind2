@@ -1,44 +1,44 @@
-import { DB } from 'drizzle-orm';
-import { Router, Request, Response, NextFunction } from 'express';
+import { DB } from 'drizzle-orm'
+import { Router, Request, Response, NextFunction } from 'express'
 
-import { OrderService } from '../services';
-import { Controller } from './../interfaces/IController';
+import { OrderService } from '../services'
+import { Controller } from './../interfaces/IController'
 
 export class OrderController implements Controller {
-    public router = Router();
-    private service: OrderService;
+    public router = Router()
+    private readonly service: OrderService
 
     constructor(db: DB) {
-        this.service = new OrderService(db);
-        this.initRoutes();
+        this.service = new OrderService(db)
+        this.initRoutes()
     }
 
-    private initRoutes = () => {
-        this.router.get('/order', this.getOrderInfo);
-        this.router.get('/orders', this.getOrdersPage);
-    };
+    private readonly initRoutes = () => {
+        this.router.get('/order', this.getOrderInfo)
+        this.router.get('/orders', this.getOrdersPage)
+    }
 
-    private getOrdersPage = async (req: Request, res: Response, next: NextFunction) => {
+    private readonly getOrdersPage = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { page } = req.query;
+            const { page } = req.query
 
-            const data = await this.service.getOrdersPage(Number(page));
+            const data = await this.service.getOrdersPage(Number(page))
 
-            res.status(200).json(data);
+            res.status(200).json(data)
         } catch (err) {
-            next(err);
+            next(err)
         }
-    };
+    }
 
-    private getOrderInfo = async (req: Request, res: Response, next: NextFunction) => {
+    private readonly getOrderInfo = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.query;
+            const { id } = req.query
 
-            const data = await this.service.getOrderInfo(Number(id));
+            const data = await this.service.getOrderInfo(Number(id))
 
-            res.status(200).json(data);
+            res.status(200).json(data)
         } catch (err) {
-            next(err);
+            next(err)
         }
-    };
+    }
 }

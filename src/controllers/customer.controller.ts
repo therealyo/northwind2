@@ -1,49 +1,49 @@
-import { DB } from 'drizzle-orm';
-import { NextFunction, Request, Response, Router } from 'express';
+import { DB } from 'drizzle-orm'
+import { NextFunction, Request, Response, Router } from 'express'
 
-import { ApiError } from './../errors/ApiError';
-import { Controller } from './../interfaces/IController';
-import { CustomerService } from './../services';
+import { ApiError } from './../errors/ApiError'
+import { Controller } from './../interfaces/IController'
+import { CustomerService } from './../services'
 
 export class CustomerController implements Controller {
-    public router = Router();
-    private service: CustomerService;
+    public router = Router()
+    private readonly service: CustomerService
 
     constructor(db: DB) {
-        this.service = new CustomerService(db);
-        this.initRoutes();
+        this.service = new CustomerService(db)
+        this.initRoutes()
     }
 
-    private initRoutes = () => {
-        this.router.get('/customer', this.getSupplierInfo);
-        this.router.get('/customers', this.getSuppliersPage);
-    };
+    private readonly initRoutes = () => {
+        this.router.get('/customer', this.getSupplierInfo)
+        this.router.get('/customers', this.getSuppliersPage)
+    }
 
-    private getSuppliersPage = async (req: Request, res: Response, next: NextFunction) => {
+    private readonly getSuppliersPage = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { page } = req.query;
+            const { page } = req.query
 
-            const data = await this.service.getCustomersPage(Number(page));
+            const data = await this.service.getCustomersPage(Number(page))
 
-            res.status(200).json(data);
+            res.status(200).json(data)
         } catch (err) {
-            next(err);
+            next(err)
         }
-    };
+    }
 
-    private getSupplierInfo = async (req: Request, res: Response, next: NextFunction) => {
+    private readonly getSupplierInfo = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.query;
+            const { id } = req.query
 
             if (typeof id !== 'string') {
-                throw new ApiError(400, 'Wrong query parameters');
+                throw new ApiError(400, 'Wrong query parameters')
             }
 
-            const data = await this.service.getCustomerInfo(id);
+            const data = await this.service.getCustomerInfo(id)
 
-            res.status(200).json(data);
+            res.status(200).json(data)
         } catch (err) {
-            next(err);
+            next(err)
         }
-    };
+    }
 }

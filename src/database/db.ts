@@ -1,7 +1,7 @@
-import { drizzle } from 'drizzle-orm';
-import * as dotenv from 'dotenv';
+import { drizzle } from 'drizzle-orm'
+import * as dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 export const connection = drizzle.connect({
     host: process.env.POSTGRES_HOST,
@@ -9,4 +9,4 @@ export const connection = drizzle.connect({
     user: 'root',
     port: 5432,
     database: process.env.POSTGRES_DB
-});
+})

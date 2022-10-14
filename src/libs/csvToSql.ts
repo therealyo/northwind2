@@ -1,7 +1,7 @@
-import fs from 'fs/promises';
-import csvtojson from 'csvtojson';
-import * as dotenv from 'dotenv';
-import { drizzle } from 'drizzle-orm';
+import fs from 'fs/promises'
+import csvtojson from 'csvtojson'
+import * as dotenv from 'dotenv'
+import { drizzle } from 'drizzle-orm'
 
 import {
     CategoriesTable,
@@ -15,26 +15,26 @@ import {
     OrderDetailsTable,
     SuppliersTable,
     OrdersTable
-} from './../data/schema';
+} from './../data/schema'
 
-dotenv.config();
+dotenv.config()
 
 interface Mapping {
-    [key: string]: any;
+    [key: string]: any
 }
 
 export const convertCSVtoSQL = async (fileName: string): Promise<void> => {
-    const tables = await getTables();
+    const tables = await getTables()
 
-    const csvData = await csvtojson().fromFile(`csvs/${fileName}`);
-    const table = tables[getTableName(fileName)];
+    const csvData = await csvtojson().fromFile(`csvs/${fileName}`)
+    const table = tables[getTableName(fileName)]
 
     try {
-        await table.insertMany(csvData).execute();
+        await table.insertMany(csvData).execute()
     } catch (err) {
-        console.log(err);
+        console.log(err)
     }
-};
+}
 
 const getTables = async (): Promise<Mapping> => {
     const db = await drizzle.connect({
@@ -43,7 +43,7 @@ const getTables = async (): Promise<Mapping> => {
         user: 'root',
         port: 5432,
         database: process.env.POSTGRES_DB
-    });
+    })
 
     return {
         Categories: new CategoriesTable(db),
@@ -57,21 +57,21 @@ const getTables = async (): Promise<Mapping> => {
         OrderDetails: new OrderDetailsTable(db),
         Suppliers: new SuppliersTable(db),
         Orders: new OrdersTable(db)
-    };
-};
+    }
+}
 
 const getTableName = (fileName: string): string => {
-    return fileName.split('.').at(0)!;
-};
+    return fileName.split('.').at(0)!
+}
 
 const filterCSV = (fileName: string): boolean => {
-    return fileName.split('.').at(-1) === 'csv';
-};
+    return fileName.split('.').at(-1) === 'csv'
+}
 
 export const getCSVS = async (dirname: string): Promise<string[]> => {
     try {
-        return (await fs.readdir(dirname)).filter(filterCSV);
+        return (await fs.readdir(dirname)).filter(filterCSV)
     } catch (err) {
-        throw err;
+        throw err
     }
-};
+}

@@ -6,6 +6,7 @@
     "scripts": {
         "insertSQL": "node dist/scripts/insertSQL.js",
         "migrate": "npx drizzle-kit migrate",
+        "lint": "eslint . --ext .ts",
         "build": "npx tsc",
         "dev": "nodemon dist/server.js",
         "start": "node dist/server.js"
@@ -19,6 +20,7 @@
         "@types/glob": "^8.0.0",
         "@types/node": "^18.8.4",
         "@typescript-eslint/eslint-plugin": "^5.40.0",
+        "@typescript-eslint/parser": "^5.40.0",
         "eslint": "^8.25.0",
         "eslint-config-standard-with-typescript": "^23.0.0",
         "eslint-plugin-import": "^2.26.0",
