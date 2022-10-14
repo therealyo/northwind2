@@ -91,7 +91,7 @@ export class OrderService extends BaseService {
                 SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS TotalPrice, \
                 SUM(OrderDetails."Quantity") AS TotalQuantity, COUNT(OrderDetails."OrderID") AS TotalProducts, \
                 Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate",\
-                Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity"\
+                Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity", Orders."ShipCountry"\
             FROM Orders \
                 LEFT JOIN OrderDetails \
                     ON Orders."OrderID" = OrderDetails."OrderID" \

@@ -1,8 +1,7 @@
 import { DB } from 'drizzle-orm'
 import { NextFunction, Request, Response, Router } from 'express'
-import { query } from 'express-validator'
-import { singleItemValidation, pageValidation } from '../validation/query.validation'
 
+import { singleItemValidation, pageValidation } from '../validation/query.validation'
 import { ApiError } from './../errors/ApiError'
 import { Controller } from './../interfaces/IController'
 import { CustomerService } from './../services'
