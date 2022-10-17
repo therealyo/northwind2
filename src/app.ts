@@ -1,5 +1,7 @@
 import express, { Application } from 'express'
 import cors from 'cors'
+import "reflect-metadata"
+
 import { Controller } from './interfaces/IController'
 import { errorHandler } from './middlewares/errorHandler.middleware'
 
