@@ -1,4 +1,5 @@
-import { DB } from 'drizzle-orm'
+import { DataSource } from 'typeorm';
+// import { DB } from 'drizzle-orm'
 import { NextFunction, Request, Response, Router } from 'express'
 
 import { ProductService } from './../services/'
@@ -9,7 +10,7 @@ export class ProductController implements Controller {
     public router = Router()
     private readonly service: ProductService
 
-    constructor(db: DB) {
+    constructor(db: DataSource) {
         this.service = new ProductService(db)
         this.initRoutes()
     }

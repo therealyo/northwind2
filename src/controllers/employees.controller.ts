@@ -1,4 +1,5 @@
-import { DB } from 'drizzle-orm'
+import { DataSource } from 'typeorm';
+// import { DB } from 'drizzle-orm'
 import { Router, Request, Response, NextFunction } from 'express'
 
 import { EmployeeService } from '../services'
@@ -9,7 +10,7 @@ export class EmployeeController implements Controller {
     public router = Router()
     private readonly service: EmployeeService
 
-    constructor(db: DB) {
+    constructor(db: DataSource) {
         this.service = new EmployeeService(db)
         this.initRoutes()
     }

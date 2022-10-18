@@ -1,4 +1,5 @@
-import { DB } from 'drizzle-orm'
+import { DataSource } from 'typeorm';
+// import { DB } from 'drizzle-orm'
 import { NextFunction, Request, Response, Router } from 'express'
 
 import { singleItemValidation, pageValidation } from '../validation/query.validation'
@@ -10,7 +11,7 @@ export class CustomerController implements Controller {
     public router = Router()
     private readonly service: CustomerService
 
-    constructor(db: DB) {
+    constructor(db: DataSource) {
         this.service = new CustomerService(db)
         this.initRoutes()
     }

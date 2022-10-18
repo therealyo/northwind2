@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 
 import App from './app'
-import { connection } from './database/db'
+// import { connection } from './database/db'
 import {
     ProductController,
     CustomerController,
@@ -9,12 +9,13 @@ import {
     EmployeeController,
     OrderController
 } from './controllers'
+import { connection } from './database/db'
 
 dotenv.config()
 
 const start = async () => {
-    const db = await connection
-    // db.useLogger(new QueryLogger());
+    const db = await connection.initialize();
+    // // db.useLogger(new QueryLogger());
     const app = new App(
         [
             new SuppliersController(db),
