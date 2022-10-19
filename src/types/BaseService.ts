@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { QueryLogger } from './../utils/QueryLogger'
 
 export class BaseService {
-    public pageSize: number = 20
+    public readonly pageSize: number = 20
     public logger: QueryLogger
     protected db: DataSource
 
