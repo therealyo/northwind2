@@ -4,6 +4,7 @@ import { ItemInfo } from './../types/ItemInfo'
 import { PageResponse } from '../types/PageResponse'
 import { BaseService } from './../types/BaseService'
 import { DataSource } from 'typeorm'
+import { Customers } from '../entities'
 // import { CustomersTable, Customer } from '../data/schema'
 
 export class CustomerService extends BaseService {
@@ -26,9 +27,21 @@ export class CustomerService extends BaseService {
         //         .where(eq(this.customersTable!.CustomerID, id))
         //         .execute()
         // )[0]
-        const customerData = await this.db.createQueryBuilder()
+        // const customerData = await this.db.createQueryBuilder()
         
+        const queryBuilder = this.db
+            .createQueryBuilder(Customers, 'customers')
+            .where('customers.CustomerID = :id', { id: id })
 
+        this.logger.addQuery(queryBuilder.getQuery())
+        // this.db.logger
+        const supplierInfo = await queryBuilder.getOne()
+
+        console.log(supplierInfo)
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: supplierInfo
+        }
         return {
             queries: this.logger.retrieveQueries()
             // data: customerInfo
