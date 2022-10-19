@@ -24,7 +24,7 @@ export class Products {
     @Column()
     Discontinued: number
 
-    @ManyToOne((type) => Suppliers, (supplier) => supplier.products)
+    @ManyToOne((type) => Suppliers, (supplier) => supplier.Products)
     @JoinColumn({ name: 'SupplierID' })
-    supplier: Suppliers
+    Supplier: Suppliers
 }

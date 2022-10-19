@@ -28,6 +28,6 @@ export class Suppliers {
     @Column()
     HomePage: string
 
-    @OneToMany((type) => Products, (product) => product.supplier)
-    products: Products[]
+    @OneToMany((type) => Products, (product) => product.Supplier)
+    Products: Products[]
 }
