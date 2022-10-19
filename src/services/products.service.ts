@@ -1,30 +1,15 @@
-import { DataSource } from 'typeorm';
-// import { DB, eq } from 'drizzle-orm'
+import { DataSource } from 'typeorm'
 
-import { ItemInfo } from './../types/ItemInfo'
 import { BaseService } from './../types/BaseService'
-import { PageResponse } from '../types/PageResponse'
-// import { Product, ProductsTable, SuppliersTable } from '../data/schema'
+import { Products } from './../entities/Products'
+import { Suppliers } from '../entities/Suppliers'
 
 export class ProductService extends BaseService {
-    // private productsTable?: ProductsTable
-    // private suppliersTable?: SuppliersTable
-
     constructor(db: DataSource) {
         super(db)
-
-        // this.initTables(db)
     }
 
-    // private readonly initTables = (db: DB): void => {
-    //     this.productsTable = new ProductsTable(db)
-    //     this.suppliersTable = new SuppliersTable(this.db)
-
-    //     this.productsTable.withLogger(this.logger)
-    // }
-
     getProductInfo = async (id: number) => {
-        
         // const data = await this.productsTable!.select()
         //     .leftJoin(this.suppliersTable!, (products, suppliers) => eq(products.SupplierID, suppliers.SupplierID))
         //     .where((products, suppliers) => eq(products.ProductID, id))
@@ -33,10 +18,18 @@ export class ProductService extends BaseService {
         // const productInfo = data.map((product, supplier) => {
         //     return { ...product, Supplier: supplier.CompanyName }
         // })[0]
+        const queryBuilder = this.db
+            .createQueryBuilder(Products, 'products')
+            .leftJoinAndSelect('products.supplier', 'suppliers')
+            .where('products.ProductID = :id', { id: id })
+
+        const productInfo = await queryBuilder.getOne()
+        // console.log(productInfo);
+        this.logger.addQuery(queryBuilder.getQuery())
 
         return {
             queries: this.logger.retrieveQueries(),
-            // data: productInfo
+            data: { ...productInfo, supplier: productInfo?.supplier.CompanyName }
         }
     }
 
@@ -51,10 +44,16 @@ export class ProductService extends BaseService {
         //     .offset((page - 1) * this.pageSize)
         //     .execute()
 
-        return { 
-            queries: this.logger.retrieveQueries(), 
-            // count, 
-            // page: pageData 
-        }
+        const queryBuilder = this.db.createQueryBuilder(Products, 'customers')
+        const pageQueryBuilder = queryBuilder.limit(this.pageSize).offset((page - 1) * this.pageSize)
+
+        const count = await queryBuilder.getCount()
+
+        const pageData = await pageQueryBuilder.getMany()
+
+        this.logger.addQuery('SELECT COUNT(*) FROM customers')
+        this.logger.addQuery(pageQueryBuilder.getQuery())
+
+        return { queries: this.logger.retrieveQueries(), count, page: pageData }
     }
 }

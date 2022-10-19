@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from "typeorm"
+import { Suppliers } from './Suppliers'
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
 
 @Entity()
 export class Products {
@@ -22,4 +23,8 @@ export class Products {
     ReorderLevel: number
     @Column()
     Discontinued: number
+
+    @ManyToOne((type) => Suppliers, (supplier) => supplier.products)
+    @JoinColumn({ name: 'SupplierID' })
+    supplier: Suppliers
 }
