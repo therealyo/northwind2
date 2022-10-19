@@ -1,0 +1,12 @@
+export * from "./Categories"
+export * from "./Customers"
+export * from "./Employees"
+export * from "./EmployeeTerritories"
+export * from "./OrderDetails"
+export * from "./Orders"
+export * from "./Products"
+export * from "./Regions"
+export * from "./Shippers"
+export * from "./Suppliers"
+export * from "./Territories"
+

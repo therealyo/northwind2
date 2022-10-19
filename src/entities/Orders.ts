@@ -1,8 +1,8 @@
-import { Entity, Column } from "typeorm"
+import { Entity, Column, PrimaryColumn } from "typeorm"
 
 @Entity()
 export class Orders {
-    @Column()
+    @PrimaryColumn()
     OrderID: number
     @Column()
     CustomerID: string
