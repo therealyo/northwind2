@@ -1,55 +1,40 @@
+import { PrismaClient } from '@prisma/client'
 
-// import { ItemInfo } from './../types/ItemInfo'
-// import { BaseService } from './../types/BaseService'
-// import { PageResponse } from '../types/PageResponse'
+import { BaseService } from './../types/BaseService'
 
-// export class ProductService extends BaseService {
+export class ProductService extends BaseService {
+    constructor(db: PrismaClient) {
+        super(db)
+    }
 
-//     constructor(db: DB) {
-//         super(db)
+    getProductInfo = async (id: number) => {
+        const productInfo = await this.db.products.findUnique({
+            where: {
+                ProductID: id
+            },
+            include: {
+                Supplier: true
+            }
+        })
 
-//         this.initTables(db)
-//     }
+        return {
+            data: {
+                ...productInfo,
+                Supplier: productInfo!.Supplier!.CompanyName
+            }
+        }
+    }
 
-//     private readonly initTables = (db: DB): void => {
-//         this.productsTable = new ProductsTable(db)
-//         this.suppliersTable = new SuppliersTable(this.db)
+    getProductsPage = async (page: number) => {
+        const count = await this.db.products.count()
+        const pageData = await this.db.products.findMany({
+            take: this.pageSize,
+            skip: this.pageSize * (page - 1)
+        })
 
-//         this.productsTable.withLogger(this.logger)
-//     }
-
-//     getProductInfo = async (id: number): Promise<ItemInfo<Product>> => {
-        
-//         const data = await this.productsTable!.select()
-//             .leftJoin(this.suppliersTable!, (products, suppliers) => eq(products.SupplierID, suppliers.SupplierID))
-//             .where((products, suppliers) => eq(products.ProductID, id))
-//             .execute()
-
-//         const productInfo = data.map((product, supplier) => {
-//             return { ...product, Supplier: supplier.CompanyName }
-//         })[0]
-
-//         return {
-//             queries: this.logger.retrieveQueries(),
-//             data: productInfo
-//         }
-//     }
-
-//     getProductsPage = async (page: number): Promise<PageResponse<Product>> => {
-//         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM Products')
-//         const count = rows[0].count
-
-//         this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
-
-//         const pageData: Product[] = await this.productsTable!.select()
-//             .limit(this.pageSize)
-//             .offset((page - 1) * this.pageSize)
-//             .execute()
-
-//         return { 
-//             queries: this.logger.retrieveQueries(), 
-//             count, 
-//             page: pageData 
-//         }
-//     }
-// }
+        return {
+            count,
+            page: pageData
+        }
+    }
+}

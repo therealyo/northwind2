@@ -86,7 +86,8 @@ model orders {
 model products {
   ProductID       Int      @id
   ProductName     String?  @db.VarChar(100)
-  SupplierID      Int?
+  SupplierID      Int?    
+  Supplier        suppliers? @relation(fields: [SupplierID], references: [SupplierID])
   CategoryID      Int?
   QuantityPerUnit String?  @db.VarChar(100)
   UnitPrice       Decimal? @db.Decimal
@@ -120,6 +121,7 @@ model suppliers {
   Phone        String? @db.VarChar(100)
   Fax          String? @db.VarChar(100)
   HomePage     String? @db.VarChar(100)
+  Products     products[] 
 }
 
 model territories {

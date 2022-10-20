@@ -6,8 +6,8 @@ import {
     ProductController,
     CustomerController,
     SuppliersController,
-    EmployeeController,
-    OrderController
+    // EmployeeController,
+    // OrderController
 } from './controllers'
 
 dotenv.config()
@@ -18,7 +18,7 @@ const start = async () => {
         [
             new SuppliersController(db),
             new CustomerController(db),
-            // new ProductController(db),
+            new ProductController(db),
             // new EmployeeController(db),
             // new OrderController(db)
         ],
