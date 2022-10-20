@@ -43,7 +43,9 @@ model employees {
   HomePhone       String? @db.VarChar(100)
   Extension       Int?
   Notes           String? @db.VarChar(500)
-  ReportsTo       Int?
+  ReportsTo       Int?  
+  Reports         employees? @relation("Reports", fields: [ReportsTo], references: [EmployeeID])
+  ReportedTo      employees[] @relation("Reports")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.

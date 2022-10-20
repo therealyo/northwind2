@@ -6,7 +6,7 @@ import {
     ProductController,
     CustomerController,
     SuppliersController,
-    // EmployeeController,
+    EmployeeController,
     // OrderController
 } from './controllers'
 
@@ -19,7 +19,7 @@ const start = async () => {
             new SuppliersController(db),
             new CustomerController(db),
             new ProductController(db),
-            // new EmployeeController(db),
+            new EmployeeController(db),
             // new OrderController(db)
         ],
         process.env.PORT
