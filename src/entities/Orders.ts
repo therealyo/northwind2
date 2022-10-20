@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm"
+import { OrderDetails } from './OrderDetails';
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm"
 
 @Entity()
 export class Orders {
@@ -30,4 +31,7 @@ export class Orders {
     ShipPostalCode: string
     @Column()
     ShipCountry: string
+
+    @OneToMany(type => OrderDetails, (detail) => detail.order)
+    Details: OrderDetails[]
 }

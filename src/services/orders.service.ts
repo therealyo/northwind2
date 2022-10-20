@@ -1,4 +1,7 @@
-import { DataSource } from 'typeorm';
+import { OrderDetails } from './../entities/OrderDetails';
+import { query } from 'express-validator'
+import { DataSource } from 'typeorm'
+import { Orders } from '../entities'
 // import { DB, eq, ExtractModel, JoinBuilderResponses } from 'drizzle-orm'
 
 import { BaseService } from '../types/BaseService'
@@ -75,7 +78,7 @@ export class OrderService extends BaseService {
         //     .execute()
 
         return {
-            queries: this.logger.retrieveQueries(),
+            queries: this.logger.retrieveQueries()
             // data: {
             //     ...this.mapOrderInfo(orderInfo),
             //     Products: this.mapProductsInfo(productsInfo)
@@ -103,10 +106,18 @@ export class OrderService extends BaseService {
         // const pageData = await this.db.session().execute(pageQuery)
 
         // this.logger.addQuery(pageQuery)
+        const queryBuilder = this.db.createQueryBuilder(Orders, 'orders')
+        const count = queryBuilder.getCount()
 
-        return { queries: this.logger.retrieveQueries() }
-            //  count, 
-            //  page: pageData.rows 
-            // }
+        const pageBuilder = queryBuilder
+            .leftJoinAndSelect('orders.Details', 'details')
+            .limit(this.pageSize)
+            .offset((page - 1) * this.pageSize)
+        const pageData = await pageBuilder.getMany()
+
+        this.logger.addQuery('SELECT COUNT(*) FROM Orders')
+        this.logger.addQuery(queryBuilder.getQuery())
+
+        return { queries: this.logger.retrieveQueries(), count, page: pageData }
     }
 }

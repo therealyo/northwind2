@@ -1,8 +1,11 @@
-import { Entity, PrimaryColumn, Column } from "typeorm"
+import { Orders } from './Orders';
+import { Entity, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from "typeorm"
 
-@Entity()
+@Entity("orderdetails")
 export class OrderDetails {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
+    id: number
+    @Column()
     OrderID: number
     @Column()
     ProductID: number
@@ -12,4 +15,8 @@ export class OrderDetails {
     Quantity: number
     @Column('decimal')
     Discount: number
+
+    @ManyToOne(type => Orders, (order) => order.Details)
+    @JoinColumn({ name: 'OrderID' })
+    order: Orders
 }
