@@ -17,7 +17,7 @@ const start = async () => {
     const app = new App(
         [
             new SuppliersController(db),
-            // new CustomerController(db),
+            new CustomerController(db),
             // new ProductController(db),
             // new EmployeeController(db),
             // new OrderController(db)

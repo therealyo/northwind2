@@ -1,48 +1,35 @@
-// import { ItemInfo } from './../types/ItemInfo'
-// import { DB, eq } from ''
+import { PrismaClient } from '@prisma/client';
+import { BaseService } from '../types/BaseService';
 
-// import { PageResponse } from '../types/PageResponse'
-// import { BaseService } from './../types/BaseService'
-// import { CustomersTable, Customer } from '../data/schema'
+export class CustomerService extends BaseService {
 
-// export class CustomerService extends BaseService {
-//     private customersTable?: CustomersTable
+    constructor(db: PrismaClient) {
+        super(db)
+    }
 
-//     constructor(db: DB) {
-//         super(db)
-//         this.initTables(db)
-//     }
+    getCustomerInfo = async (id: string) => {
+        const customerInfo = await this.db.customers.findFirst({
+            where: {
+                CustomerID: id
+            }
+        })
 
-//     private readonly initTables = (db: DB): void => {
-//         this.customersTable = new CustomersTable(db)
-//         this.customersTable.withLogger(this.logger)
-//     }
+        return {
+            data: customerInfo
+        }
+    }
 
-//     getCustomerInfo = async (id: string): Promise<ItemInfo<Customer>> => {
-//         const customerInfo: Customer = (
-//             await this.customersTable!
-//                 .select()
-//                 .where(eq(this.customersTable!.CustomerID, id))
-//                 .execute()
-//         )[0]
+    getCustomersPage = async (page: number) => {
+        const count = await this.db.customers.count()
 
-//         return {
-//             queries: this.logger.retrieveQueries(),
-//             data: customerInfo
-//         }
-//     }
+        const pageData = await this.db.customers.findMany({
+            take: this.pageSize,
+            skip: (page - 1) * this.pageSize
+        })
 
-//     getCustomersPage = async (page: number): Promise<PageResponse<Customer>> => {
-//         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM customers')
-//         const count = rows[0].count
-
-//         this.logger.addQuery('SELECT COUNT(*) FROM customers')
-
-//         const pageData: Customer[] = await this.customersTable!.select()
-//             .limit(this.pageSize)
-//             .offset((page - 1) * this.pageSize)
-//             .execute()
-
-//         return { queries: this.logger.retrieveQueries(), count, page: pageData }
-//     }
-// }
+        return {
+            count,
+            page: pageData
+        }
+    }
+}
