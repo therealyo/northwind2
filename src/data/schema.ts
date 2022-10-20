@@ -62,6 +62,7 @@ export class EmployeeTerritoriesTable extends AbstractTable<EmployeeTerritoriesT
 }
 
 export class OrderDetailsTable extends AbstractTable<OrderDetailsTable> {
+    public id = this.serial("id").primaryKey()
     public OrderID = this.int('OrderID')
     public ProductID = this.int('ProductID')
     public UnitPrice = this.decimal('UnitPrice')

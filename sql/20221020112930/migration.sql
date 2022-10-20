@@ -1,0 +1,1 @@
+ALTER TABLE OrderDetails ADD COLUMN "id" SERIAL;
