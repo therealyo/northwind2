@@ -56,7 +56,7 @@ model employeeterritories {
   @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+
 model orderdetails {
   OrderID   Int?
   ProductID Int?
@@ -64,8 +64,8 @@ model orderdetails {
   Quantity  Int?
   Discount  Decimal? @db.Decimal
   id        Int      @id @default(autoincrement())
-
-  @@ignore
+  Orders    orders?   @relation(fields: [OrderID], references: [OrderID])
+  Products  products? @relation(fields: [ProductID], references: [ProductID])
 }
 
 model orders {
@@ -76,6 +76,7 @@ model orders {
   RequiredDate   String?  @db.VarChar(100)
   ShippedDate    String?  @db.VarChar(100)
   ShipVia        Int?
+  ShippedBy      shippers? @relation(fields: [ShipVia], references: [ShipperID])
   Freight        Decimal? @db.Decimal
   ShipName       String?  @db.VarChar(100)
   ShipAddress    String?  @db.VarChar(100)
@@ -83,6 +84,7 @@ model orders {
   ShipRegion     String?  @db.VarChar(100)
   ShipPostalCode String?  @db.VarChar(100)
   ShipCountry    String?  @db.VarChar(100)
+  Details        orderdetails[]
 }
 
 model products {
@@ -97,6 +99,7 @@ model products {
   UnitsOnOrder    Int?
   ReorderLevel    Int?
   Discontinued    Int?
+  Orders          orderdetails[]
 }
 
 model regions {
@@ -108,6 +111,7 @@ model shippers {
   ShipperID   Int     @id
   CompanyName String? @db.VarChar(100)
   Phone       String? @db.VarChar(50)
+  Orders      orders[]
 }
 
 model suppliers {

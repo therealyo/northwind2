@@ -7,20 +7,19 @@ import {
     CustomerController,
     SuppliersController,
     EmployeeController,
-    // OrderController
+    OrderController
 } from './controllers'
 
 dotenv.config()
 
 const start = async () => {
-    // db.useLogger(new QueryLogger());
     const app = new App(
         [
             new SuppliersController(db),
             new CustomerController(db),
             new ProductController(db),
             new EmployeeController(db),
-            // new OrderController(db)
+            new OrderController(db)
         ],
         process.env.PORT
     )
