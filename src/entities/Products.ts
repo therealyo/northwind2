@@ -1,5 +1,6 @@
+import { OrderDetails } from './OrderDetails';
 import { Suppliers } from './Suppliers'
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm'
 
 @Entity()
 export class Products {
@@ -27,4 +28,7 @@ export class Products {
     @ManyToOne((type) => Suppliers, (supplier) => supplier.Products)
     @JoinColumn({ name: 'SupplierID' })
     Supplier: Suppliers
+
+    @OneToMany(type => OrderDetails, (detail) => detail.Product)
+    Orders: OrderDetails[]
 }

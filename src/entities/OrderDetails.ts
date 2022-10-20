@@ -1,3 +1,4 @@
+import { Products } from './Products';
 import { Orders } from './Orders';
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from "typeorm"
 
@@ -19,4 +20,9 @@ export class OrderDetails {
     @ManyToOne(type => Orders, (order) => order.Details)
     @JoinColumn({ name: 'OrderID' })
     order: Orders
+
+    @ManyToOne(type => Products, (product) => product.Orders)
+    @JoinColumn({name: "ProductID"})
+    Product: Products
+    
 }

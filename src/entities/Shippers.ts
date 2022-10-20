@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from "typeorm"
+import { Entity, PrimaryColumn, Column, OneToMany, JoinColumn } from "typeorm"
+import { Orders } from "./Orders"
 
 @Entity()
 export class Shippers {
@@ -8,4 +9,8 @@ export class Shippers {
     CompanyName: string
     @Column()
     Phone: string
+
+    @OneToMany(type => Orders, (order) => order.Shipper)
+    @JoinColumn({name: "ShipperID"})
+    Orders: Orders[]
 }
