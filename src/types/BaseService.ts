@@ -1,12 +1,12 @@
-import { DB } from 'drizzle-orm'
+import { PrismaClient } from '@prisma/client';
 import { QueryLogger } from './../utils/QueryLogger'
 
 export class BaseService {
     public pageSize: number = 20
     public logger: QueryLogger
-    protected db: DB
+    protected db: PrismaClient
 
-    constructor(db: DB) {
+    constructor(db: PrismaClient) {
         this.logger = new QueryLogger()
         this.db = db
     }

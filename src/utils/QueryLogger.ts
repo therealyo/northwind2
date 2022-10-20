@@ -1,6 +1,6 @@
-import BaseLogger from 'drizzle-orm/logger/abstractLogger'
+// import BaseLogger from '/logger/abstractLogger'
 
-export class QueryLogger extends BaseLogger {
+export class QueryLogger {
     queries: string[] = []
 
     private readonly isEmptyString = (str: string) => {

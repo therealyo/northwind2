@@ -1,47 +1,34 @@
-import { DB, eq } from 'drizzle-orm'
-
-import { ItemInfo } from './../types/ItemInfo'
+import { PrismaClient } from '@prisma/client';
 import { BaseService } from './../types/BaseService'
-import { PageResponse } from '../types/PageResponse'
-import { Supplier, SuppliersTable } from './../data/schema'
 
 export class SupplierService extends BaseService {
-    private suppliersTable?: SuppliersTable
-
-    constructor(db: DB) {
+    constructor(db: PrismaClient) {
         super(db)
-        this.initTables(db)
     }
 
-    private readonly initTables = (db: DB): void => {
-        this.suppliersTable = new SuppliersTable(db)
-        this.suppliersTable.withLogger(this.logger)
-    }
+    getSupplierInfo = async (id: number) => {
+        const supplierInfo = await this.db.suppliers.findFirst({
+            where: {
+                SupplierID: id
+            }
+        })
 
-    async getSupplierInfo(id: number): Promise<ItemInfo<Supplier>> {
-        const supplierInfo = (
-            await this.suppliersTable!
-                .select()
-                .where(eq(this.suppliersTable!.SupplierID, id))
-                .execute()
-        )[0]
         return {
-            queries: this.logger.retrieveQueries(),
             data: supplierInfo
         }
     }
 
-    getSuppliersPage = async (page: number): Promise<PageResponse<Supplier>> => {
-        const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM suppliers')
-        const count = rows[0].count
+    getSuppliersPage = async (page: number) => {
+        const pageData = await this.db.suppliers.findMany({
+            take: this.pageSize,
+            skip: (page - 1) * this.pageSize
+        })
 
-        this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
+        const count = await this.db.suppliers.count()
 
-        const pageData: Supplier[] = await this.suppliersTable!.select()
-            .limit(this.pageSize)
-            .offset((page - 1) * this.pageSize)
-            .execute()
-
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return { 
+            count, 
+            page: pageData 
+        }
     }
 }

@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  CategoryID   Int     @id
+  CategoryName String? @db.VarChar(100)
+  Description  String? @db.VarChar(100)
+}
+
+model customers {
+  CustomerID   String  @id @db.VarChar(20)
+  CompanyName  String? @db.VarChar(100)
+  ContactName  String? @db.VarChar(100)
+  ContactTitle String? @db.VarChar(100)
+  Address      String? @db.VarChar(100)
+  City         String? @db.VarChar(100)
+  Region       String? @db.VarChar(100)
+  PostalCode   String? @db.VarChar(100)
+  Country      String? @db.VarChar(100)
+  Phone        String? @db.VarChar(100)
+  Fax          String? @db.VarChar(100)
+}
+
+model employees {
+  EmployeeID      Int     @id
+  LastName        String? @db.VarChar(100)
+  FirstName       String? @db.VarChar(100)
+  Title           String? @db.VarChar(100)
+  TitleOfCourtesy String? @db.VarChar(100)
+  BirthDate       String? @db.VarChar(100)
+  HireDate        String? @db.VarChar(100)
+  Address         String? @db.VarChar(100)
+  City            String? @db.VarChar(100)
+  Region          String? @db.VarChar(100)
+  PostalCode      String? @db.VarChar(100)
+  Country         String? @db.VarChar(100)
+  HomePhone       String? @db.VarChar(100)
+  Extension       Int?
+  Notes           String? @db.VarChar(500)
+  ReportsTo       Int?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model employeeterritories {
+  EmployeeID  Int?
+  TerritoryID Int?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model orderdetails {
+  OrderID   Int?
+  ProductID Int?
+  UnitPrice Decimal? @db.Decimal
+  Quantity  Int?
+  Discount  Decimal? @db.Decimal
+  id        Int      @id @default(autoincrement())
+
+  @@ignore
+}
+
+model orders {
+  OrderID        Int      @id
+  CustomerID     String?  @db.VarChar(5)
+  EmployeeID     Int?
+  OrderDate      String?  @db.VarChar(100)
+  RequiredDate   String?  @db.VarChar(100)
+  ShippedDate    String?  @db.VarChar(100)
+  ShipVia        Int?
+  Freight        Decimal? @db.Decimal
+  ShipName       String?  @db.VarChar(100)
+  ShipAddress    String?  @db.VarChar(100)
+  ShipCity       String?  @db.VarChar(100)
+  ShipRegion     String?  @db.VarChar(100)
+  ShipPostalCode String?  @db.VarChar(100)
+  ShipCountry    String?  @db.VarChar(100)
+}
+
+model products {
+  ProductID       Int      @id
+  ProductName     String?  @db.VarChar(100)
+  SupplierID      Int?
+  CategoryID      Int?
+  QuantityPerUnit String?  @db.VarChar(100)
+  UnitPrice       Decimal? @db.Decimal
+  UnitsInStock    Int?
+  UnitsOnOrder    Int?
+  ReorderLevel    Int?
+  Discontinued    Int?
+}
+
+model regions {
+  RegionID          Int     @id
+  RegionDescription String? @db.VarChar(30)
+}
+
+model shippers {
+  ShipperID   Int     @id
+  CompanyName String? @db.VarChar(100)
+  Phone       String? @db.VarChar(50)
+}
+
+model suppliers {
+  SupplierID   Int     @id
+  CompanyName  String? @db.VarChar(100)
+  ContactName  String? @db.VarChar(100)
+  ContactTitle String? @db.VarChar(100)
+  Address      String? @db.VarChar(100)
+  City         String? @db.VarChar(100)
+  Region       String? @db.VarChar(100)
+  PostalCode   String? @db.VarChar(100)
+  Country      String? @db.VarChar(100)
+  Phone        String? @db.VarChar(100)
+  Fax          String? @db.VarChar(100)
+  HomePage     String? @db.VarChar(100)
+}
+
+model territories {
+  TerritoryID          String  @id @db.VarChar(10)
+  TerritoryDescription String? @db.VarChar(50)
+  RegionID             Int?
+}

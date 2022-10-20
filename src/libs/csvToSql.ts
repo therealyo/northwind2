@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import csvtojson from 'csvtojson'
 import * as dotenv from 'dotenv'
-import { drizzle } from 'drizzle-orm'
+import { drizzle } from ''
 
 import {
     CategoriesTable,
