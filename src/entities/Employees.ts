@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm'
+import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn } from 'typeorm'
 
 @Entity()
 export class Employees {
@@ -32,6 +32,14 @@ export class Employees {
     Extension: number
     @Column()
     Notes: string
+
     @Column()
     ReportsTo: number
+    
+    @OneToOne(type => Employees, reports => reports.EmployeeID,{ 
+        cascade: true, 
+        onDelete: "CASCADE" 
+    })
+    @JoinColumn({ name: 'EmployeeID' })
+    Reports: Employees
 }

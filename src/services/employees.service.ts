@@ -1,4 +1,5 @@
-import { DataSource } from 'typeorm';
+import { Employees } from './../entities/Employees'
+import { DataSource } from 'typeorm'
 import { ItemInfo } from './../types/ItemInfo'
 // import { DB, eq } from 'drizzle-orm'
 
@@ -26,15 +27,25 @@ export class EmployeeService extends BaseService {
         //     .execute()
 
         // const employeeInfo = data.map((employee, joined) => {
-        //     return { 
-        //         ...employee, 
-        //         ReportsTo: `${joined.FirstName} ${joined.LastName}` 
+        //     return {
+        //         ...employee,
+        //         ReportsTo: `${joined.FirstName} ${joined.LastName}`
         //     }
         // })[0] as Employee & { ReportsTo: string }
+        const queryBuilder = this.db
+            .createQueryBuilder(Employees, 'employees')
+            .leftJoinAndSelect('employees.Reports', 'empl')
+            .where('employees.EmployeeID = :id', { id: id })
 
+        const employeeInfo = await queryBuilder.getOne()
+        this.logger.addQuery(queryBuilder.getQuery())
+        console.log(employeeInfo)
         return {
             queries: this.logger.retrieveQueries(),
-            // data: employeeInfo
+            data: {
+                ...employeeInfo,
+                Reports: `${employeeInfo?.Reports.FirstName} ${employeeInfo?.Reports.LastName}`
+            }
         }
     }
 
@@ -49,10 +60,10 @@ export class EmployeeService extends BaseService {
         //     .offset((page - 1) * this.pageSize)
         //     .execute()
 
-        return { 
-            queries: this.logger.retrieveQueries(), 
-            // count, 
-            // page: pageData 
+        return {
+            queries: this.logger.retrieveQueries()
+            // count,
+            // page: pageData
         }
     }
 }
