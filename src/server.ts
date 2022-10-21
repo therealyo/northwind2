@@ -13,8 +13,6 @@ import {
 dotenv.config()
 
 const start = async () => {
-    console.log("Successful connection to db");
-    // db.useLogger(new QueryLogger());
     const app = new App(
         [
             new SuppliersController(db),

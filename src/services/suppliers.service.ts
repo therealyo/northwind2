@@ -8,34 +8,36 @@ export class SupplierService extends BaseService {
     }
 
     getSupplierInfo = async (id: number) => {
-        // const supplierInfo = (
-        //     await this.suppliersTable!
-        //         .select()
-        //         .where(eq(this.suppliersTable!.SupplierID, id))
-        //         .execute()
-        // )[0]
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     data: supplierInfo
-        // }
+        const infoQuery = this.db.queryBuilder()
+        .select()
+        .from("suppliers")
+        .where({"SupplierID": id})
+
+        this.logger.addQuery(infoQuery.toQuery())
+        const supplierInfo = await infoQuery
+
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: supplierInfo
+        }
     }
 
     getSuppliersPage = async (page: number) => {
-        //     const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM suppliers')
-        //     const count = rows[0].count
+        const countQuery = this.db.queryBuilder().select().from('suppliers').count()
 
-        //     this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
+        this.logger.addQuery(countQuery.toQuery())
+        const { count } = await countQuery.first()
 
-        //     const pageData: Supplier[] = await this.suppliersTable!.select()
-        //         .limit(this.pageSize)
-        //         .offset((page - 1) * this.pageSize)
-        //         .execute()
-        const pageData = await this.db("northwind.suppliers")
+        const pageQuery = this.db
+            .queryBuilder()
             .select()
+            .from('suppliers')
             .limit(this.pageSize)
             .offset(this.pageSize * (page - 1))
-        console.log(pageData)
-        //     return { queries: this.logger.retrieveQueries(), count, page: pageData }
-        // }
+
+        this.logger.addQuery(pageQuery.toQuery())
+        const pageData = await pageQuery
+
+        return { queries: this.logger.retrieveQueries(), count, page: pageData }
     }
 }
