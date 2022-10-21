@@ -3,46 +3,52 @@ import { Knex } from 'knex'
 import { BaseService } from './../types/BaseService'
 
 export class ProductService extends BaseService {
-
     constructor(db: Knex) {
         super(db)
-
     }
 
-   
-
     getProductInfo = async (id: number) => {
-        
-        // const data = await this.productsTable!.select()
-        //     .leftJoin(this.suppliersTable!, (products, suppliers) => eq(products.SupplierID, suppliers.SupplierID))
-        //     .where((products, suppliers) => eq(products.ProductID, id))
-        //     .execute()
+        const infoQuery = this.db
+            .queryBuilder()
+            .select(
+                'ProductName',
+                'CompanyName',
+                'QuantityPerUnit',
+                'UnitPrice',
+                'UnitsInStock',
+                'UnitsOnOrder',
+                'ReorderLevel',
+                'Discontinued'
+            )
+            .from('products')
+            .leftJoin('suppliers', 'products.SupplierID', 'suppliers.SupplierID')
+            .where({ ProductID: id })
 
-        // const productInfo = data.map((product, supplier) => {
-        //     return { ...product, Supplier: supplier.CompanyName }
-        // })[0]
+        this.logger.addQuery(infoQuery.toQuery())
+        const supplierInfo = await infoQuery.first()
 
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     data: productInfo
-        // }
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: { ...supplierInfo, Supplier: supplierInfo.CompanyName }
+        }
     }
 
     getProductsPage = async (page: number) => {
-        // const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM Products')
-        // const count = rows[0].count
+        const countQuery = this.db.queryBuilder().select().from('products').count()
 
-        // this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
+        this.logger.addQuery(countQuery.toQuery())
+        const { count } = await countQuery.first()
 
-        // const pageData: Product[] = await this.productsTable!.select()
-        //     .limit(this.pageSize)
-        //     .offset((page - 1) * this.pageSize)
-        //     .execute()
+        const pageQuery = this.db
+            .queryBuilder()
+            .select()
+            .from('products')
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
 
-        // return { 
-        //     queries: this.logger.retrieveQueries(), 
-        //     count, 
-        //     page: pageData 
-        // }
+        this.logger.addQuery(pageQuery.toQuery())
+        const pageData = await pageQuery
+
+        return { queries: this.logger.retrieveQueries(), count, page: pageData }
     }
 }

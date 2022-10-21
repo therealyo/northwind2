@@ -15,7 +15,7 @@ export class CustomerService extends BaseService {
         .where({"CustomerID": id})
 
         this.logger.addQuery(infoQuery.toQuery())
-        const supplierInfo = await infoQuery
+        const supplierInfo = await infoQuery.first()
 
         return {
             queries: this.logger.retrieveQueries(),
