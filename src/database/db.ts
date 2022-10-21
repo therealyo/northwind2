@@ -13,7 +13,7 @@ dotenv.config()
 //         rejectUnauthorized: false
 //     }
 // })
-export const connection = knex({
+export const db = knex({
     client: 'pg',
     connection: {
         host: process.env.POSTGRES_HOST,
@@ -24,5 +24,10 @@ export const connection = knex({
         ssl: {
             rejectUnauthorized: false
         }
-    }
+    },
+    migrations: {
+        tableName: "northwind",
+        directory: "src/migrations"
+    },
+    useNullAsDefault: true
 })

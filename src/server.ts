@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 
 import App from './app'
-import { connection } from './database/db'
+import { db } from './database/db'
 import {
     ProductController,
     CustomerController,
@@ -13,7 +13,7 @@ import {
 dotenv.config()
 
 const start = async () => {
-    const db = await connection
+    console.log("Successful connection to db");
     // db.useLogger(new QueryLogger());
     const app = new App(
         [

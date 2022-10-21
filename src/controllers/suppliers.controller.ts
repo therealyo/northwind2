@@ -1,9 +1,9 @@
+import { Knex } from 'knex'
 import { NextFunction, Request, Response, Router } from 'express'
 
 import { SupplierService } from './../services'
 import { Controller } from './../interfaces/IController'
 import { singleItemValidation, pageValidation } from '../validation/query.validation'
-import { Knex } from 'knex'
 
 export class SuppliersController implements Controller {
     public router = Router()
