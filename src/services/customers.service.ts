@@ -9,30 +9,36 @@ export class CustomerService extends BaseService {
     }
 
     getCustomerInfo = async (id: string) => {
-        // const customerInfo: Customer = (
-        //     await this.customersTable!
-        //         .select()
-        //         .where(eq(this.customersTable!.CustomerID, id))
-        //         .execute()
-        // )[0]
+        const infoQuery = this.db.queryBuilder()
+        .select()
+        .from("customers")
+        .where({"CustomerID": id})
 
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     data: customerInfo
-        // }
+        this.logger.addQuery(infoQuery.toQuery())
+        const supplierInfo = await infoQuery
+
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: supplierInfo
+        }
     }
 
     getCustomersPage = async (page: number) => {
-        // const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM customers')
-        // const count = rows[0].count
+        const countQuery = this.db.queryBuilder().select().from('customers').count()
 
-        // this.logger.addQuery('SELECT COUNT(*) FROM customers')
+        this.logger.addQuery(countQuery.toQuery())
+        const { count } = await countQuery.first()
 
-        // const pageData: Customer[] = await this.customersTable!.select()
-        //     .limit(this.pageSize)
-        //     .offset((page - 1) * this.pageSize)
-        //     .execute()
+        const pageQuery = this.db
+            .queryBuilder()
+            .select()
+            .from('customers')
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
 
-        // return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        this.logger.addQuery(pageQuery.toQuery())
+        const pageData = await pageQuery
+
+        return { queries: this.logger.retrieveQueries(), count, page: pageData }
     }
 }
