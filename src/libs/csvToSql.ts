@@ -3,6 +3,8 @@ import csvtojson from 'csvtojson'
 import * as dotenv from 'dotenv'
 import { drizzle } from 'drizzle-orm'
 
+
+import {connection} from "../database/db"
 import {
     CategoriesTable,
     EmployeeTerritoriesTable,
@@ -37,14 +39,7 @@ export const convertCSVtoSQL = async (fileName: string): Promise<void> => {
 }
 
 const getTables = async (): Promise<Mapping> => {
-    const db = await drizzle.connect({
-        host: process.env.POSTGRES_HOST,
-        password: process.env.POSTGRES_PASSWORD,
-        user: 'root',
-        port: 5432,
-        database: process.env.POSTGRES_DB
-    })
-
+    const db = await connection
     return {
         Categories: new CategoriesTable(db),
         EmployeeTerritories: new EmployeeTerritoriesTable(db),

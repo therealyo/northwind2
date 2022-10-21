@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS Employees (
 );
 
 CREATE TABLE IF NOT EXISTS OrderDetails (
+	"id" SERIAL PRIMARY KEY,
 	"OrderID" INT,
 	"ProductID" INT,
 	"UnitPrice" numeric,
