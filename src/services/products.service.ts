@@ -25,11 +25,11 @@ export class ProductService extends BaseService {
             .where({ ProductID: id })
 
         this.logger.addQuery(infoQuery.toQuery())
-        const supplierInfo = await infoQuery.first()
+        const productInfo = await infoQuery.first()
 
         return {
             queries: this.logger.retrieveQueries(),
-            data: { ...supplierInfo, Supplier: supplierInfo.CompanyName }
+            data: { ...productInfo, Supplier: productInfo.CompanyName }
         }
     }
 

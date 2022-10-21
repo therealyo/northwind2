@@ -1,48 +1,53 @@
-import { Knex } from 'knex';
+import { Knex } from 'knex'
 
 import { BaseService } from './../types/BaseService'
 
 export class EmployeeService extends BaseService {
-
     constructor(db: Knex) {
         super(db)
     }
 
-
-
     getEmployeeInfo = async (id: number) => {
-        // const data = await this.employeesTable!.select()
-        //     .leftJoin(this.employeesTable!, (employees, joined) => eq(employees.ReportsTo, joined.EmployeeID))
-        //     .where((employees, joined) => eq(employees.EmployeeID, id))
-        //     .execute()
+        const infoQuery = this.db
+            .with('reports', (qb) => {
+                qb.select(
+                    'EmployeeID as reportID',
+                    'LastName as reportsLastName',
+                    'FirstName as reportsFirstName'
+                ).from('employees')
+            })
+            .select()
+            .from('employees')
+            .leftJoin('reports', 'employees.ReportsTo', 'reports.reportID')
+            .where({ EmployeeID: id })
 
-        // const employeeInfo = data.map((employee, joined) => {
-        //     return { 
-        //         ...employee, 
-        //         ReportsTo: `${joined.FirstName} ${joined.LastName}` 
-        //     }
-        // })[0] as Employee & { ReportsTo: string }
+        this.logger.addQuery(infoQuery.toQuery())
+        const employeeInfo = await infoQuery.first()
 
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     data: employeeInfo
-        // }
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: { 
+                ...employeeInfo, 
+                ReportsTo: `${employeeInfo.reportsFirstName} ${employeeInfo.reportsLastName}` }
+        }
     }
 
     getEmployeesPage = async (page: number) => {
-        // const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM employees')
-        // const count = rows[0].count
+        const countQuery = this.db.queryBuilder().select().from('employees').count()
 
-        // this.logger.addQuery('SELECT COUNT(*) FROM employees')
+        this.logger.addQuery(countQuery.toQuery())
+        const { count } = await countQuery.first()
 
-        // const pageData: Employee[] = await this.employeesTable!.select()
-        //     .limit(this.pageSize)
-        //     .offset((page - 1) * this.pageSize)
-        //     .execute()
+        const pageQuery = this.db
+            .queryBuilder()
+            .select()
+            .from('employees')
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
 
-        // return { 
-        //     queries: this.logger.retrieveQueries(), 
-        //     count, 
-        //     page: pageData }
+        this.logger.addQuery(pageQuery.toQuery())
+        const pageData = await pageQuery
+
+        return { queries: this.logger.retrieveQueries(), count, page: pageData }
     }
 }
