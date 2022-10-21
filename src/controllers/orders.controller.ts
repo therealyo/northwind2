@@ -1,4 +1,4 @@
-import { DB } from 'drizzle-orm'
+import { Knex } from 'knex';
 import { Router, Request, Response, NextFunction } from 'express'
 
 import { OrderService } from '../services'
@@ -9,7 +9,7 @@ export class OrderController implements Controller {
     public router = Router()
     private readonly service: OrderService
 
-    constructor(db: DB) {
+    constructor(db: Knex) {
         this.service = new OrderService(db)
         this.initRoutes()
     }

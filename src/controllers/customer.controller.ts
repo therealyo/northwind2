@@ -1,4 +1,4 @@
-import { DB } from 'drizzle-orm'
+import { Knex } from 'knex';
 import { NextFunction, Request, Response, Router } from 'express'
 
 import { singleItemValidation, pageValidation } from '../validation/query.validation'
@@ -10,7 +10,7 @@ export class CustomerController implements Controller {
     public router = Router()
     private readonly service: CustomerService
 
-    constructor(db: DB) {
+    constructor(db: Knex) {
         this.service = new CustomerService(db)
         this.initRoutes()
     }
