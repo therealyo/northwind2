@@ -1,5 +1,5 @@
-import { Kysely } from 'kysely';
-import { DB } from 'kysely-codegen';
+import { Kysely, sql } from 'kysely'
+import { DB } from 'kysely-codegen'
 
 import { BaseService } from '../types/BaseService'
 
@@ -9,81 +9,82 @@ export class OrderService extends BaseService {
     }
 
     getOrderInfo = async (id: number) => {
-        // const orderQuery = this.db
-        //     .queryBuilder()
-        //     .select(
-        //         this.db.raw('sum(?? * ??) as ??', ['orderdetails.UnitPrice', 'orderdetails.Quantity', 'TotalPrice']),
-        //         'orders.OrderID',
-        //         'orders.OrderID',
-        //         'orders.OrderDate',
-        //         'orders.RequiredDate',
-        //         'orders.ShippedDate',
-        //         'shippers.CompanyName as ShipVia',
-        //         'orders.Freight',
-        //         'orders.ShipName',
-        //         'orders.ShipAddress',
-        //         'orders.ShipCity',
-        //         'orders.ShipCountry'
-        //     )
-        //     .from('orders')
-        //     .leftJoin('orderdetails', 'orders.OrderID', 'orderdetails.OrderID')
-        //     .leftJoin('shippers', 'orders.ShipVia', 'shippers.ShipperID')
-        //     .groupBy('orders.OrderID')
-        //     .groupBy('shippers.CompanyName')
-        //     .where('orders.OrderID', '=', id)
+        const orderInfo = await this.db
+            .selectFrom('orders')
+            .leftJoin('orderdetails', 'orders.OrderID', 'orderdetails.OrderID')
+            .leftJoin('shippers', 'orders.ShipVia', 'shippers.ShipperID')
+            .select([
+                sql`SUM(orderdetails."UnitPrice" * orderdetails."Quantity")`.as('TotalPrice'),
+                sql`SUM(orderdetails."Quantity")`.as('TotalQuantity'),
+                sql`COUNT(orderdetails."OrderID")`.as('TotalProducts'),
+                sql`SUM(orderdetails."Discount")`.as('TotalDiscount'),
+                'orders.OrderID',
+                'orders.OrderDate',
+                'orders.RequiredDate',
+                'orders.ShippedDate',
+                'shippers.CompanyName as ShipVia',
+                'orders.Freight',
+                'orders.ShipName',
+                'orders.ShipAddress',
+                'orders.ShipCity',
+                'orders.ShipCountry',
+                'orders.ShipPostalCode',
+                'orders.ShipRegion'
+            ])
+            .groupBy(['orders.OrderID', 'shippers.CompanyName'])
+            .where('orders.OrderID', '=', id)
+            .executeTakeFirst()
 
-        // this.logger.addQuery(orderQuery.toQuery())
-        // const orderInfo = await orderQuery.first()
+        const productInfo = await this.db
+            .selectFrom('products')
+            .leftJoin('orderdetails', 'products.ProductID', 'orderdetails.ProductID')
+            .select([
+                sql`orderdetails."Quantity" * orderdetails."UnitPrice"`.as('TotalPrice'),
+                'products.UnitPrice',
+                'orderdetails.Quantity',
+                'orderdetails.Discount',
+                'products.ProductName'
+            ])
+            .groupBy(['products.ProductID', 'orderdetails.id'])
+            .where('orderdetails.OrderID', '=', id)
+            .execute()
 
-        // const productsQuery = this.db
-        //     .queryBuilder()
-        //     .select()
-        //     .from('products')
-        //     .leftJoin('orderdetails', 'products.ProductID', 'orderdetails.ProductID')
-        //     .groupBy('products.ProductID')
-        //     .groupBy('orderdetails.id')
-        //     .groupBy('orderdetails.OrderID')
-        //     .where('orderdetails.OrderID', '=', id)
-        // this.logger.addQuery(productsQuery.toQuery())
-        // const products = await productsQuery
-
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     data: { ...orderInfo, Products: products }
-        // }
+        return {
+            data: {
+                ...orderInfo,
+                Products: productInfo
+            }
+        }
     }
 
     getOrdersPage = async (page: number) => {
-        // const countQuery = this.db.queryBuilder().select().from('orders').count()
+        const count = await this.db.selectFrom('orders').selectAll().execute()
+        const pageData = await this.db
+            .selectFrom('orders')
+            .leftJoin('orderdetails', 'orders.OrderID', 'orderdetails.OrderID')
+            .select([
+                sql`SUM(orderdetails."UnitPrice" * orderdetails."Quantity")`.as('TotalPrice'),
+                sql`SUM(orderdetails."Quantity")`.as('TotalQuantity'),
+                sql`COUNT(orderdetails."OrderID")`.as('TotalProducts'),
+                'orders.OrderID',
+                'orders.OrderDate',
+                'orders.RequiredDate',
+                'orders.ShippedDate',
+                'orders.ShipVia',
+                'orders.Freight',
+                'orders.ShipName',
+                'orders.ShipAddress',
+                'orders.ShipCity',
+                'orders.ShipCountry'
+            ])
+            .groupBy(['orders.OrderID'])
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
+            .execute()
 
-        // this.logger.addQuery(countQuery.toQuery())
-        // const { count } = await countQuery.first()
-
-        // const pageQuery = this.db('orders')
-        //     .leftJoin('orderdetails', 'orders.OrderID', 'orderdetails.OrderID')
-        //     .select(
-        //         this.db.raw('sum(?? * ??) as ??', ['orderdetails.UnitPrice', 'orderdetails.Quantity', 'TotalPrice']),
-        //         this.db.raw('sum(??) as ??', ['orderdetails.Quantity', 'TotalQuantity']),
-        //         this.db.raw('COUNT(??) as ??', ['orderdetails.OrderID', 'TotalProducts']),
-        //         'orders.OrderID',
-        //         'orders.OrderID',
-        //         'orders.OrderDate',
-        //         'orders.RequiredDate',
-        //         'orders.ShippedDate',
-        //         'orders.ShipVia',
-        //         'orders.Freight',
-        //         'orders.ShipName',
-        //         'orders.ShipAddress',
-        //         'orders.ShipCity',
-        //         'orders.ShipCountry'
-        //     )
-        //     .groupBy('orders.OrderID')
-        //     .limit(this.pageSize)
-        //     .offset(this.pageSize * (page - 1))
-
-        // this.logger.addQuery(pageQuery.toQuery())
-        // const pageData = await pageQuery
-
-        // return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return {
+            count: count.length,
+            page: pageData
+        }
     }
 }
