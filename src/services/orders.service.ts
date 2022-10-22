@@ -50,6 +50,9 @@ export class OrderService extends BaseService {
     private mapOrderDetails = (orderItem: Orders) => {
         return {
             TotalPrice: orderItem.Details.reduce((sum, curr) => sum + curr.Quantity * curr.UnitPrice, 0),
+            TotalQuantity: orderItem.Details.reduce((sum, curr) => sum + curr.Quantity, 0),
+            TotalProducts: orderItem.Details.length,
+            TotalDiscount: orderItem.Details.reduce((sum, curr) => sum + curr.Discount, 0),
             OrderID: orderItem.OrderID,
             CustomerID: orderItem.CustomerID,
             OrderDate: orderItem.OrderDate,
@@ -60,15 +63,23 @@ export class OrderService extends BaseService {
             ShipName: orderItem.ShipName,
             ShipAddress: orderItem.ShipAddress,
             ShipCity: orderItem.ShipCity,
-            Products: orderItem.Details.map(detail => detail.Product)
+            Products: orderItem.Details.map((detail) => { 
+                return {
+                    ProductName: detail.Product.ProductName,
+                    Quantity: detail.Quantity,
+                    UnitPrice: detail.UnitPrice,
+                    TotalPrice: detail.Quantity * detail.UnitPrice,
+                    Discount: detail.Discount
+                }
+            })
         }
     }
 
     private mapOrderPageDetails = (orderItem: Orders) => {
         return {
-            totalprice: orderItem.Details.reduce((sum, curr) => sum + curr.Quantity * curr.UnitPrice, 0),
-            totalquantity: orderItem.Details.reduce((sum, curr) => sum + curr.Quantity, 0),
-            totalproducts: orderItem.Details.length,
+            TotalPrice: orderItem.Details.reduce((sum, curr) => sum + curr.Quantity * curr.UnitPrice, 0),
+            TotalQuantity: orderItem.Details.reduce((sum, curr) => sum + curr.Quantity, 0),
+            TotalProducts: orderItem.Details.length,
             OrderID: orderItem.OrderID,
             CustomerID: orderItem.CustomerID,
             OrderDate: orderItem.OrderDate,

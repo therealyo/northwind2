@@ -1,7 +1,5 @@
-// import { connection } from './db';
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-// import { drizzle } from 'drizzle-orm'
 import * as dotenv from 'dotenv'
 import {
     Categories,
@@ -23,7 +21,7 @@ export const connection = new DataSource({
     type: 'postgres',
     host: process.env.POSTGRES_HOST,
     password: process.env.POSTGRES_PASSWORD,
-    username: 'root',
+    username: process.env.POSTGRES_USER,
     port: 5432,
     database: process.env.POSTGRES_DB,
     entities: [
@@ -39,5 +37,8 @@ export const connection = new DataSource({
         Suppliers,
         Territories
     ],
+    ssl: {
+        rejectUnauthorized: false
+    },
     synchronize: false
 })
