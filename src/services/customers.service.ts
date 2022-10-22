@@ -1,9 +1,8 @@
-import { Kysely } from 'kysely';
-import { DB } from 'kysely-codegen';
+import { Kysely } from 'kysely'
+import { DB } from 'kysely-codegen'
 import { BaseService } from './../types/BaseService'
 
 export class CustomerService extends BaseService {
-
     constructor(db: Kysely<DB>) {
         super(db)
     }
@@ -21,28 +20,29 @@ export class CustomerService extends BaseService {
         //     queries: this.logger.retrieveQueries(),
         //     data: customerInfo
         // }
+        const customerInfo = await this.db
+            .selectFrom('customers')
+            .selectAll()
+            .where('customers.CustomerID', '=', id)
+            .execute()
+            
+        return {
+            data: customerInfo
+        }
     }
 
     getCustomersPage = async (page: number) => {
-        // const countQuery = this.db.queryBuilder().select().from('customers').count()
+        const count = await this.db.selectFrom('customers').selectAll().execute()
+        const pageData = await this.db
+            .selectFrom('customers')
+            .selectAll()
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
+            .execute()
 
-        // this.logger.addQuery(countQuery.toQuery())
-        // const { count } = await countQuery.first()
-
-        // const pageQuery = this.db
-        //     .queryBuilder()
-        //     .select()
-        //     .from('customers')
-        //     .limit(this.pageSize)
-        //     .offset(this.pageSize * (page - 1))
-
-        // this.logger.addQuery(pageQuery.toQuery())
-        // const pageData = await pageQuery
-
-        // return { 
-        //     queries: this.logger.retrieveQueries(), 
-        //     count, 
-        //     page: pageData 
-        // }
+        return {
+            count: count.length,
+            page: pageData
+        }
     }
 }

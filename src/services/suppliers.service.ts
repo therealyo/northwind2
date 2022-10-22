@@ -21,21 +21,6 @@ export class SupplierService extends BaseService {
     }
 
     getSuppliersPage = async (page: number) => {
-        // const countQuery = this.db.queryBuilder().select().from('suppliers').count()
-        // this.logger.addQuery(countQuery.toQuery())
-        // const { count } = await countQuery.first()
-        // const pageQuery = this.db
-        //     .queryBuilder()
-        //     .select()
-        //     .from('suppliers')
-        //     .limit(this.pageSize)
-        //     .offset(this.pageSize * (page - 1))
-        // this.logger.addQuery(pageQuery.toQuery())
-        // const pageData = await pageQuery
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     count,
-        //     page: pageData }
         const count = await this.db.selectFrom('suppliers').selectAll().execute()
         const pageData = await this.db
             .selectFrom('suppliers')
