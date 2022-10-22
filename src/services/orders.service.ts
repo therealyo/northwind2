@@ -12,6 +12,9 @@ export class OrderService extends BaseService {
             .queryBuilder()
             .select(
                 this.db.raw('sum(?? * ??) as ??', ['orderdetails.UnitPrice', 'orderdetails.Quantity', 'TotalPrice']),
+                this.db.raw('sum(??) as ??', ['orderdetails.Quantity', 'TotalQuantity']),
+                this.db.raw('COUNT(??) as ??', ['orderdetails.OrderID', 'TotalProducts']),
+                this.db.raw('sum(??) as ??', ['orderdetails.Discount', 'TotalDiscount']),
                 'orders.OrderID',
                 'orders.OrderID',
                 'orders.OrderDate',
@@ -36,7 +39,12 @@ export class OrderService extends BaseService {
 
         const productsQuery = this.db
             .queryBuilder()
-            .select()
+            .select(
+                this.db.raw('sum(?? * ??) as ??', ['orderdetails.UnitPrice', 'orderdetails.Quantity', 'TotalPrice']),
+                'products.UnitPrice',
+                'orderdetails.Quantity',
+                'orderdetails.Discount',
+                'products.ProductName')
             .from('products')
             .leftJoin('orderdetails', 'products.ProductID', 'orderdetails.ProductID')
             .groupBy('products.ProductID')
