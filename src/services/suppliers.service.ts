@@ -38,6 +38,9 @@ export class SupplierService extends BaseService {
         this.logger.addQuery(pageQuery.toQuery())
         const pageData = await pageQuery
 
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return { 
+            queries: this.logger.retrieveQueries(), 
+            count, 
+            page: pageData }
     }
 }

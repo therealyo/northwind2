@@ -29,7 +29,10 @@ export class ProductService extends BaseService {
 
         return {
             queries: this.logger.retrieveQueries(),
-            data: { ...productInfo, Supplier: productInfo.CompanyName }
+            data: { 
+                ...productInfo, 
+                Supplier: productInfo.CompanyName 
+            }
         }
     }
 
@@ -49,6 +52,10 @@ export class ProductService extends BaseService {
         this.logger.addQuery(pageQuery.toQuery())
         const pageData = await pageQuery
 
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return { 
+            queries: this.logger.retrieveQueries(), 
+            count, 
+            page: pageData 
+        }
     }
 }

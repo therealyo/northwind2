@@ -28,7 +28,8 @@ export class EmployeeService extends BaseService {
             queries: this.logger.retrieveQueries(),
             data: { 
                 ...employeeInfo, 
-                ReportsTo: `${employeeInfo.reportsFirstName} ${employeeInfo.reportsLastName}` }
+                ReportsTo: `${employeeInfo.reportsFirstName} ${employeeInfo.reportsLastName}` 
+            }
         }
     }
 
@@ -48,6 +49,10 @@ export class EmployeeService extends BaseService {
         this.logger.addQuery(pageQuery.toQuery())
         const pageData = await pageQuery
 
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return { 
+            queries: this.logger.retrieveQueries(), 
+            count, 
+            page: pageData 
+        }
     }
 }
