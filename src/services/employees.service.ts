@@ -1,5 +1,5 @@
-import { Kysely } from 'kysely';
-import { DB } from 'kysely-codegen';
+import { Kysely } from 'kysely'
+import { DB } from 'kysely-codegen'
 
 import { BaseService } from './../types/BaseService'
 
@@ -9,51 +9,50 @@ export class EmployeeService extends BaseService {
     }
 
     getEmployeeInfo = async (id: number) => {
-        // const infoQuery = this.db
-        //     .with('reports', (qb) => {
-        //         qb.select(
-        //             'EmployeeID as reportID',
-        //             'LastName as reportsLastName',
-        //             'FirstName as reportsFirstName'
-        //         ).from('employees')
-        //     })
-        //     .select()
-        //     .from('employees')
-        //     .leftJoin('reports', 'employees.ReportsTo', 'reports.reportID')
-        //     .where({ EmployeeID: id })
+        const customerInfo = await this.db
+            .selectFrom('employees')
+            .leftJoin('employees as reports', 'employees.ReportsTo', 'reports.EmployeeID')
+            .select([
+                'employees.EmployeeID',
+                'employees.FirstName',
+                'employees.LastName',
+                'employees.Title',
+                'employees.TitleOfCourtesy',
+                'employees.BirthDate',
+                'employees.HireDate',
+                'employees.Address',
+                'employees.City',
+                'employees.PostalCode',
+                'employees.Country',
+                'employees.HomePhone',
+                'employees.Extension',
+                'employees.Notes',
+                'reports.FirstName as reportsFirstName',
+                'reports.LastName as reportstLastName'
+            ])
+            .where('employees.EmployeeID', '=', id)
+            .executeTakeFirst()
 
-        // this.logger.addQuery(infoQuery.toQuery())
-        // const employeeInfo = await infoQuery.first()
-
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     data: { 
-        //         ...employeeInfo, 
-        //         ReportsTo: `${employeeInfo.reportsFirstName} ${employeeInfo.reportsLastName}` 
-        //     }
-        // }
+        return {
+            data: {
+                ...customerInfo,
+                ReportsTo: `${customerInfo!.reportsFirstName} ${customerInfo!.reportstLastName}`
+            }
+        }
     }
 
     getEmployeesPage = async (page: number) => {
-        // const countQuery = this.db.queryBuilder().select().from('employees').count()
+        const count = await this.db.selectFrom('employees').selectAll().execute()
+        const pageData = await this.db
+            .selectFrom('employees')
+            .selectAll()
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
+            .execute()
 
-        // this.logger.addQuery(countQuery.toQuery())
-        // const { count } = await countQuery.first()
-
-        // const pageQuery = this.db
-        //     .queryBuilder()
-        //     .select()
-        //     .from('employees')
-        //     .limit(this.pageSize)
-        //     .offset(this.pageSize * (page - 1))
-
-        // this.logger.addQuery(pageQuery.toQuery())
-        // const pageData = await pageQuery
-
-        // return { 
-        //     queries: this.logger.retrieveQueries(), 
-        //     count, 
-        //     page: pageData 
-        // }
+        return {
+            count: count.length,
+            page: pageData
+        }
     }
 }
