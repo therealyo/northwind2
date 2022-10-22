@@ -1,48 +1,48 @@
-import { Knex } from 'knex';
-
+import { Kysely } from 'kysely';
+import { DB } from 'kysely-codegen';
 import { BaseService } from './../types/BaseService'
 
 export class CustomerService extends BaseService {
 
-    constructor(db: Knex) {
+    constructor(db: Kysely<DB>) {
         super(db)
     }
 
     getCustomerInfo = async (id: string) => {
-        const infoQuery = this.db.queryBuilder()
-        .select()
-        .from("customers")
-        .where({"CustomerID": id})
+        // const infoQuery = this.db.queryBuilder()
+        // .select()
+        // .from("customers")
+        // .where({"CustomerID": id})
 
-        this.logger.addQuery(infoQuery.toQuery())
-        const customerInfo = await infoQuery.first()
+        // this.logger.addQuery(infoQuery.toQuery())
+        // const customerInfo = await infoQuery.first()
 
-        return {
-            queries: this.logger.retrieveQueries(),
-            data: customerInfo
-        }
+        // return {
+        //     queries: this.logger.retrieveQueries(),
+        //     data: customerInfo
+        // }
     }
 
     getCustomersPage = async (page: number) => {
-        const countQuery = this.db.queryBuilder().select().from('customers').count()
+        // const countQuery = this.db.queryBuilder().select().from('customers').count()
 
-        this.logger.addQuery(countQuery.toQuery())
-        const { count } = await countQuery.first()
+        // this.logger.addQuery(countQuery.toQuery())
+        // const { count } = await countQuery.first()
 
-        const pageQuery = this.db
-            .queryBuilder()
-            .select()
-            .from('customers')
-            .limit(this.pageSize)
-            .offset(this.pageSize * (page - 1))
+        // const pageQuery = this.db
+        //     .queryBuilder()
+        //     .select()
+        //     .from('customers')
+        //     .limit(this.pageSize)
+        //     .offset(this.pageSize * (page - 1))
 
-        this.logger.addQuery(pageQuery.toQuery())
-        const pageData = await pageQuery
+        // this.logger.addQuery(pageQuery.toQuery())
+        // const pageData = await pageQuery
 
-        return { 
-            queries: this.logger.retrieveQueries(), 
-            count, 
-            page: pageData 
-        }
+        // return { 
+        //     queries: this.logger.retrieveQueries(), 
+        //     count, 
+        //     page: pageData 
+        // }
     }
 }

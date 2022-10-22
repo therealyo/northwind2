@@ -1,16 +1,17 @@
-import { Knex } from 'knex';
+import { Kysely } from 'kysely';
 import { NextFunction, Request, Response, Router } from 'express'
 
 import { singleItemValidation, pageValidation } from '../validation/query.validation'
 import { ApiError } from './../errors/ApiError'
 import { Controller } from './../interfaces/IController'
 import { CustomerService } from './../services'
+import { DB } from 'kysely-codegen';
 
 export class CustomerController implements Controller {
     public router = Router()
     private readonly service: CustomerService
 
-    constructor(db: Knex) {
+    constructor(db: Kysely<DB>) {
         this.service = new CustomerService(db)
         this.initRoutes()
     }

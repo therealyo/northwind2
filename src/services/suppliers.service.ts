@@ -1,46 +1,52 @@
-import { Knex } from 'knex'
+import { Kysely } from 'kysely'
+import { DB } from 'kysely-codegen'
 
 import { BaseService } from './../types/BaseService'
 
 export class SupplierService extends BaseService {
-    constructor(db: Knex) {
+    constructor(db: Kysely<DB>) {
         super(db)
     }
 
     getSupplierInfo = async (id: number) => {
-        const infoQuery = this.db.queryBuilder()
-        .select()
-        .from("suppliers")
-        .where({"SupplierID": id})
-
-        this.logger.addQuery(infoQuery.toQuery())
-        const supplierInfo = await infoQuery.first()
+        const supplierInfo = await this.db
+            .selectFrom('suppliers')
+            .selectAll()
+            .where('suppliers.SupplierID', '=', id)
+            .executeTakeFirst()
 
         return {
-            queries: this.logger.retrieveQueries(),
             data: supplierInfo
         }
     }
 
     getSuppliersPage = async (page: number) => {
-        const countQuery = this.db.queryBuilder().select().from('suppliers').count()
-
-        this.logger.addQuery(countQuery.toQuery())
-        const { count } = await countQuery.first()
-
-        const pageQuery = this.db
-            .queryBuilder()
-            .select()
-            .from('suppliers')
+        // const countQuery = this.db.queryBuilder().select().from('suppliers').count()
+        // this.logger.addQuery(countQuery.toQuery())
+        // const { count } = await countQuery.first()
+        // const pageQuery = this.db
+        //     .queryBuilder()
+        //     .select()
+        //     .from('suppliers')
+        //     .limit(this.pageSize)
+        //     .offset(this.pageSize * (page - 1))
+        // this.logger.addQuery(pageQuery.toQuery())
+        // const pageData = await pageQuery
+        // return {
+        //     queries: this.logger.retrieveQueries(),
+        //     count,
+        //     page: pageData }
+        const count = await this.db.selectFrom('suppliers').selectAll().execute()
+        const pageData = await this.db
+            .selectFrom('suppliers')
+            .selectAll()
             .limit(this.pageSize)
             .offset(this.pageSize * (page - 1))
-
-        this.logger.addQuery(pageQuery.toQuery())
-        const pageData = await pageQuery
-
-        return { 
-            queries: this.logger.retrieveQueries(), 
-            count, 
-            page: pageData }
+            .execute()
+            
+        return {
+            count: count.length,
+            page: pageData
+        }
     }
 }
