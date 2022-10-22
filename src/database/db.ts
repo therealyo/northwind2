@@ -25,9 +25,5 @@ export const db = knex({
             rejectUnauthorized: false
         }
     },
-    migrations: {
-        tableName: "northwind",
-        directory: "migrations"
-    },
     useNullAsDefault: true
 })
