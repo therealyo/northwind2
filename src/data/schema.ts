@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, integer, decimal, } from 'drizzle-orm-pg'
+import { pgTable, serial, text, varchar, integer, decimal, InferModel } from 'drizzle-orm-pg'
 
 export const categories = pgTable('categories', {
     CategoryID: integer('CategoryID').primaryKey(),
@@ -120,6 +120,17 @@ export const territories = pgTable('territories', {
     TerritoryDescription: varchar('TerritoryDescription'),
     RegionID: integer('RegionID')
 })
+
+export type Category = InferModel<typeof categories>
+export type Employee = InferModel<typeof employees>
+export type Customer = InferModel<typeof customers>
+export type Order = InferModel<typeof orders>
+export type OrderDetails = InferModel<typeof orderDetails>
+export type Product = InferModel<typeof products>
+export type Supplier = InferModel<typeof suppliers>
+export type Shipper = InferModel<typeof shippers>
+export type Region = InferModel<typeof regions>
+export type Terrotory = InferModel<typeof territories>
 
 export const schema = {
     categories,
