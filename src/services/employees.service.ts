@@ -1,56 +1,48 @@
-import { ItemInfo } from './../types/ItemInfo'
-// import { DB, eq } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 
-// import { PageResponse } from '../types/PageResponse'
 import { BaseService } from './../types/BaseService'
-// import { Employee, EmployeesTable } from './../data/schema'
 
 export class EmployeeService extends BaseService {
-    // private employeesTable?: EmployeesTable
-
-    // constructor(db: DB) {
-    //     super(db)
-    //     this.initTables(db)
-    // }
-
-    // private readonly initTables = (db: DB): void => {
-    //     this.employeesTable = new EmployeesTable(db)
-    //     this.employeesTable.withLogger(this.logger)
-    // }
 
     getEmployeeInfo = async (id: number) => {
-        // const data = await this.employeesTable!.select()
-        //     .leftJoin(this.employeesTable!, (employees, joined) => eq(employees.ReportsTo, joined.EmployeeID))
-        //     .where((employees, joined) => eq(employees.EmployeeID, id))
-        //     .execute()
+        const { rows: employeeInfo } = await this.db.execute(
+            sql`SELECT 
+            employees."EmployeeID",
+            employees."LastName",
+            employees."FirstName",
+            employees."Title",
+            employees."TitleOfCourtesy",
+            employees."BirthDate",
+            employees."HireDate",
+            employees."Address",
+            employees."City",
+            employees."Region",
+            employees."PostalCode",
+            employees."Country",
+            employees."HomePhone",
+            employees."Extension",
+            employees."Notes",
+            CONCAT(reports."LastName", ' ', reports."FirstName") as "ReportsTo"
+            FROM employees LEFT JOIN employees AS reports ON employees."ReportsTo"=reports."EmployeeID" WHERE employees."EmployeeID"=${id}`
+        )
 
-        // const employeeInfo = data.map((employee, joined) => {
-        //     return { 
-        //         ...employee, 
-        //         ReportsTo: `${joined.FirstName} ${joined.LastName}` 
-        //     }
-        // })[0] as Employee & { ReportsTo: string }
-
-        // return {
-        //     queries: this.logger.retrieveQueries(),
-        //     data: employeeInfo
-        // }
+        return {
+            data: employeeInfo[0]
+        }
     }
 
     getEmployeesPage = async (page: number) => {
-        // const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM employees')
-        // const count = rows[0].count
+        const pageData = await this.db.employees
+            .select()
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
+            .execute()
 
-        // this.logger.addQuery('SELECT COUNT(*) FROM employees')
+        const count = (await this.db.employees.select().execute()).length
 
-        // const pageData: Employee[] = await this.employeesTable!.select()
-        //     .limit(this.pageSize)
-        //     .offset((page - 1) * this.pageSize)
-        //     .execute()
-
-        // return { 
-        //     queries: this.logger.retrieveQueries(), 
-        //     count, 
-        //     page: pageData }
+        return {
+            count,
+            page: pageData
+        }
     }
 }

@@ -21,7 +21,9 @@ export class CustomerService extends BaseService {
             .offset(this.pageSize * (page - 1))
             .execute()
 
+        const count = (await this.db.customers.select().execute()).length;
         return {
+            count,
             page: pageData
         }
     }

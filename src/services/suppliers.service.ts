@@ -22,7 +22,10 @@ export class SupplierService extends BaseService {
             .offset(this.pageSize * (page - 1))
             .execute()
 
+        const count = (await this.db.suppliers.select().execute()).length
+
         return {
+            count,
             page: pageData
         }
     }

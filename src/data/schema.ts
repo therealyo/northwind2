@@ -36,7 +36,13 @@ export const employees = pgTable('employees', {
     HomePhone: varchar('HomePhone', { length: 100 }),
     Extension: integer('Extension'),
     Notes: text('Notes'),
-    ReportsTo: integer('ReportsTo')
+    ReportsTo: integer('ReportsTo').references(() => reports.EmployeeID)
+})
+
+export const reports = pgTable("employees", {
+    EmployeeID: integer("EmployeeID").primaryKey(),
+    LastName: varchar('LastName', { length: 100 }),
+    FirstName: varchar('FirstName', { length: 100 }),
 })
 
 export const employeeTerritories = pgTable('employeeterritories', {
