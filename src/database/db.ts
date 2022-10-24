@@ -2,19 +2,7 @@ import { PgConnector } from 'drizzle-orm-pg'
 import { Pool } from 'pg'
 import * as dotenv from 'dotenv'
 
-import {
-    categories,
-    customers,
-    employees,
-    employeeTerritories,
-    orderDetails,
-    orders,
-    products,
-    regions,
-    shippers,
-    suppliers,
-    territories
-} from './../data/schema'
+import { schema } from './../data/schema'
 
 dotenv.config()
 
@@ -29,16 +17,4 @@ const pool = new Pool({
     }
 })
 
-export const connector = new PgConnector(pool, {
-    categories,
-    customers,
-    employees,
-    employeeTerritories,
-    orderDetails,
-    orders,
-    products,
-    regions,
-    shippers,
-    suppliers,
-    territories
-})
+export const connector = new PgConnector(pool, schema)
