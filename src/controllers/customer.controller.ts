@@ -1,4 +1,5 @@
-import { DB } from 'drizzle-orm'
+import { schema } from './../data/schema';
+import { PGDatabase } from 'drizzle-orm-pg'
 import { NextFunction, Request, Response, Router } from 'express'
 
 import { singleItemValidation, pageValidation } from '../validation/query.validation'
@@ -10,7 +11,7 @@ export class CustomerController implements Controller {
     public router = Router()
     private readonly service: CustomerService
 
-    constructor(db: DB) {
+    constructor(db: PGDatabase<typeof schema>) {
         this.service = new CustomerService(db)
         this.initRoutes()
     }

@@ -1,4 +1,5 @@
-import { DB } from 'drizzle-orm'
+import { schema } from './../data/schema';
+import { PGDatabase } from 'drizzle-orm-pg';
 import { Router, Request, Response, NextFunction } from 'express'
 
 import { OrderService } from '../services'
@@ -9,7 +10,7 @@ export class OrderController implements Controller {
     public router = Router()
     private readonly service: OrderService
 
-    constructor(db: DB) {
+    constructor(db: PGDatabase<typeof schema>) {
         this.service = new OrderService(db)
         this.initRoutes()
     }

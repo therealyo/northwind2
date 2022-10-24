@@ -1,47 +1,47 @@
-import { DB, eq } from 'drizzle-orm'
+// import { DB, eq } from 'drizzle-orm'
 
-import { ItemInfo } from './../types/ItemInfo'
+// import { ItemInfo } from './../types/ItemInfo'
 import { BaseService } from './../types/BaseService'
-import { PageResponse } from '../types/PageResponse'
-import { Supplier, SuppliersTable } from './../data/schema'
+// import { PageResponse } from '../types/PageResponse'
+// import { Supplier, SuppliersTable } from './../data/schema'
 
 export class SupplierService extends BaseService {
-    private suppliersTable?: SuppliersTable
+//     private suppliersTable?: SuppliersTable
 
-    constructor(db: DB) {
-        super(db)
-        this.initTables(db)
+//     constructor(db: DB) {
+//         super(db)
+//         // this.initTables(db)
+//     }
+
+//     // private readonly initTables = (db: DB): void => {
+//     //     this.suppliersTable = new SuppliersTable(db)
+//     //     this.suppliersTable.withLogger(this.logger)
+//     // }
+
+    getSupplierInfo = async(id: number)=> {
+//         const supplierInfo = (
+//             await this.suppliersTable!
+//                 .select()
+//                 .where(eq(this.suppliersTable!.SupplierID, id))
+//                 .execute()
+//         )[0]
+//         return {
+//             queries: this.logger.retrieveQueries(),
+//             data: supplierInfo
+//         }
     }
 
-    private readonly initTables = (db: DB): void => {
-        this.suppliersTable = new SuppliersTable(db)
-        this.suppliersTable.withLogger(this.logger)
-    }
+    getSuppliersPage = async (page: number) => {
+//         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM suppliers')
+//         const count = rows[0].count
 
-    async getSupplierInfo(id: number): Promise<ItemInfo<Supplier>> {
-        const supplierInfo = (
-            await this.suppliersTable!
-                .select()
-                .where(eq(this.suppliersTable!.SupplierID, id))
-                .execute()
-        )[0]
-        return {
-            queries: this.logger.retrieveQueries(),
-            data: supplierInfo
-        }
-    }
+//         this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
 
-    getSuppliersPage = async (page: number): Promise<PageResponse<Supplier>> => {
-        const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM suppliers')
-        const count = rows[0].count
+//         const pageData: Supplier[] = await this.suppliersTable!.select()
+//             .limit(this.pageSize)
+//             .offset((page - 1) * this.pageSize)
+//             .execute()
 
-        this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
-
-        const pageData: Supplier[] = await this.suppliersTable!.select()
-            .limit(this.pageSize)
-            .offset((page - 1) * this.pageSize)
-            .execute()
-
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+//         return { queries: this.logger.retrieveQueries(), count, page: pageData }
     }
 }
