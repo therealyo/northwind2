@@ -1,47 +1,29 @@
-// import { DB, eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm/expressions'
 
-// import { ItemInfo } from './../types/ItemInfo'
+import { suppliers } from '../data/schema'
 import { BaseService } from './../types/BaseService'
-// import { PageResponse } from '../types/PageResponse'
-// import { Supplier, SuppliersTable } from './../data/schema'
 
 export class SupplierService extends BaseService {
-//     private suppliersTable?: SuppliersTable
+    getSupplierInfo = async (id: number) => {
+        const supplierInfo = await this.db.suppliers
+            .select()
+            .where(eq(suppliers.SupplierID, id))
+            .execute()
 
-//     constructor(db: DB) {
-//         super(db)
-//         // this.initTables(db)
-//     }
-
-//     // private readonly initTables = (db: DB): void => {
-//     //     this.suppliersTable = new SuppliersTable(db)
-//     //     this.suppliersTable.withLogger(this.logger)
-//     // }
-
-    getSupplierInfo = async(id: number)=> {
-//         const supplierInfo = (
-//             await this.suppliersTable!
-//                 .select()
-//                 .where(eq(this.suppliersTable!.SupplierID, id))
-//                 .execute()
-//         )[0]
-//         return {
-//             queries: this.logger.retrieveQueries(),
-//             data: supplierInfo
-//         }
+        return {
+            data: supplierInfo[0]
+        }
     }
 
     getSuppliersPage = async (page: number) => {
-//         const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM suppliers')
-//         const count = rows[0].count
+        const pageData = await this.db.suppliers
+            .select()
+            .limit(this.pageSize)
+            .offset(this.pageSize * (page - 1))
+            .execute()
 
-//         this.logger.addQuery('SELECT COUNT(*) FROM suppliers')
-
-//         const pageData: Supplier[] = await this.suppliersTable!.select()
-//             .limit(this.pageSize)
-//             .offset((page - 1) * this.pageSize)
-//             .execute()
-
-//         return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        return {
+            page: pageData
+        }
     }
 }
