@@ -11,37 +11,50 @@ type OrderInfo = {
     products: Product | null
 } | null
 export class OrderService extends BaseService {
+    
     getOrderInfo = async (id: number) => {
-        const orderInfo = await this.db.orders
+        this.logger.setStart()
+        const query = this.db.orders
             .select()
             .leftJoin(orderDetails, eq(orders.OrderID, orderDetails.OrderID))
             .leftJoin(shippers, eq(orders.ShipVia, shippers.ShipperID))
             .leftJoin(products, eq(orderDetails.ProductID, products.ProductID))
             .where(eq(orders.OrderID, id))
-            .execute()
+        const orderInfo = await query.execute()
+        this.logger.setEnd()
+        this.logger.addQuery(query.getQuery().sql)
 
         return {
+            queries: this.logger.retrieveQueries(),
             data: this.mapOrderInfo(orderInfo)
         }
     }
 
     getOrdersPage = async (page: number) => {
-        const count = (await this.db.orders.select().execute()).length
-
-        const { rows: pageData } = await this.db.execute(sql`
-        SELECT \
-            SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS "TotalPrice", \
-            SUM(OrderDetails."Quantity") AS "TotalQuantity", COUNT(OrderDetails."OrderID") AS "TotalProducts", \
-            Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate",\
-            Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity", Orders."ShipCountry"\
-        FROM Orders \
-            LEFT JOIN OrderDetails \
-                ON Orders."OrderID" = OrderDetails."OrderID" \
-                    GROUP BY Orders."OrderID" \
-                    ORDER BY Orders."OrderID" \
-                    LIMIT ${this.pageSize} OFFSET ${(page - 1) * this.pageSize}`)
+        this.logger.setStart()
+        const query = sql`SELECT \
+                            SUM(OrderDetails."UnitPrice" * OrderDetails."Quantity") AS "TotalPrice", \
+                            SUM(OrderDetails."Quantity") AS "TotalQuantity", COUNT(OrderDetails."OrderID") AS "TotalProducts", \
+                            Orders."OrderID", Orders."CustomerID", Orders."OrderDate", Orders."RequiredDate", Orders."ShippedDate",\
+                            Orders."ShipVia", Orders."Freight",Orders."ShipName",Orders."ShipAddress",Orders."ShipCity", Orders."ShipCountry"\
+                        FROM Orders \
+                            LEFT JOIN OrderDetails \
+                                ON Orders."OrderID" = OrderDetails."OrderID" \
+                                    GROUP BY Orders."OrderID" \
+                                    ORDER BY Orders."OrderID" \
+                                    LIMIT ${this.pageSize} OFFSET ${(page - 1) * this.pageSize}`
+        const { rows: pageData } = await this.db.execute(query)
+        this.logger.setEnd()
+        this.logger.addQuery(query.getSQL().queryChunks[0].toString().replace(/  +/g, ' '))
+        
+        this.logger.setStart()
+        const countQuery = this.db.orders.select()
+        const count = (await countQuery.execute()).length
+        this.logger.setEnd()
+        this.logger.addQuery(countQuery.getQuery().sql)
 
         return {
+            queries: this.logger.retrieveQueries(),
             count,
             page: pageData
         }
