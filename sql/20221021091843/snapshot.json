@@ -1,0 +1,564 @@
+{
+    "version": "2",
+    "tables": {
+      "Categories": {
+        "name": "Categories",
+        "columns": {
+          "CategoryID": {
+            "name": "CategoryID",
+            "type": "INT",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "CategoryName": {
+            "name": "CategoryName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Description": {
+            "name": "Description",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Customers": {
+        "name": "Customers",
+        "columns": {
+          "CustomerID": {
+            "name": "CustomerID",
+            "type": "character varying(20)",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "CompanyName": {
+            "name": "CompanyName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ContactName": {
+            "name": "ContactName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ContactTitle": {
+            "name": "ContactTitle",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Address": {
+            "name": "Address",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "City": {
+            "name": "City",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Region": {
+            "name": "Region",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "PostalCode": {
+            "name": "PostalCode",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Country": {
+            "name": "Country",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Phone": {
+            "name": "Phone",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Fax": {
+            "name": "Fax",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "EmployeeTerritories": {
+        "name": "EmployeeTerritories",
+        "columns": {
+          "EmployeeID": {
+            "name": "EmployeeID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "TerritoryID": {
+            "name": "TerritoryID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Employees": {
+        "name": "Employees",
+        "columns": {
+          "EmployeeID": {
+            "name": "EmployeeID",
+            "type": "INT",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "LastName": {
+            "name": "LastName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "FirstName": {
+            "name": "FirstName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Title": {
+            "name": "Title",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "TitleOfCourtesy": {
+            "name": "TitleOfCourtesy",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "BirthDate": {
+            "name": "BirthDate",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "HireDate": {
+            "name": "HireDate",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Address": {
+            "name": "Address",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "City": {
+            "name": "City",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Region": {
+            "name": "Region",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "PostalCode": {
+            "name": "PostalCode",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Country": {
+            "name": "Country",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "HomePhone": {
+            "name": "HomePhone",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Extension": {
+            "name": "Extension",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Notes": {
+            "name": "Notes",
+            "type": "character varying(500)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ReportsTo": {
+            "name": "ReportsTo",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "OrderDetails": {
+        "name": "OrderDetails",
+        "columns": {
+          "id": {
+            "name": "id",
+            "type": "SERIAL",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "OrderID": {
+            "name": "OrderID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ProductID": {
+            "name": "ProductID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "UnitPrice": {
+            "name": "UnitPrice",
+            "type": "numeric",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Quantity": {
+            "name": "Quantity",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Discount": {
+            "name": "Discount",
+            "type": "numeric",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Orders": {
+        "name": "Orders",
+        "columns": {
+          "OrderID": {
+            "name": "OrderID",
+            "type": "INT",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "CustomerID": {
+            "name": "CustomerID",
+            "type": "character varying(5)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "EmployeeID": {
+            "name": "EmployeeID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "OrderDate": {
+            "name": "OrderDate",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "RequiredDate": {
+            "name": "RequiredDate",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShippedDate": {
+            "name": "ShippedDate",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShipVia": {
+            "name": "ShipVia",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Freight": {
+            "name": "Freight",
+            "type": "numeric",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShipName": {
+            "name": "ShipName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShipAddress": {
+            "name": "ShipAddress",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShipCity": {
+            "name": "ShipCity",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShipRegion": {
+            "name": "ShipRegion",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShipPostalCode": {
+            "name": "ShipPostalCode",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ShipCountry": {
+            "name": "ShipCountry",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Products": {
+        "name": "Products",
+        "columns": {
+          "ProductID": {
+            "name": "ProductID",
+            "type": "INT",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "ProductName": {
+            "name": "ProductName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "SupplierID": {
+            "name": "SupplierID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "CategoryID": {
+            "name": "CategoryID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "QuantityPerUnit": {
+            "name": "QuantityPerUnit",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "UnitPrice": {
+            "name": "UnitPrice",
+            "type": "numeric",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "UnitsInStock": {
+            "name": "UnitsInStock",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "UnitsOnOrder": {
+            "name": "UnitsOnOrder",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ReorderLevel": {
+            "name": "ReorderLevel",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Discontinued": {
+            "name": "Discontinued",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Regions": {
+        "name": "Regions",
+        "columns": {
+          "RegionID": {
+            "name": "RegionID",
+            "type": "INT",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "RegionDescription": {
+            "name": "RegionDescription",
+            "type": "character varying(30)",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Shippers": {
+        "name": "Shippers",
+        "columns": {
+          "ShipperID": {
+            "name": "ShipperID",
+            "type": "INT",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "CompanyName": {
+            "name": "CompanyName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Phone": {
+            "name": "Phone",
+            "type": "character varying(50)",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Suppliers": {
+        "name": "Suppliers",
+        "columns": {
+          "SupplierID": {
+            "name": "SupplierID",
+            "type": "INT",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "CompanyName": {
+            "name": "CompanyName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ContactName": {
+            "name": "ContactName",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "ContactTitle": {
+            "name": "ContactTitle",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Address": {
+            "name": "Address",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "City": {
+            "name": "City",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Region": {
+            "name": "Region",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "PostalCode": {
+            "name": "PostalCode",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Country": {
+            "name": "Country",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Phone": {
+            "name": "Phone",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "Fax": {
+            "name": "Fax",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "HomePage": {
+            "name": "HomePage",
+            "type": "character varying(100)",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      },
+      "Territories": {
+        "name": "Territories",
+        "columns": {
+          "TerritoryID": {
+            "name": "TerritoryID",
+            "type": "character varying(10)",
+            "primaryKey": true,
+            "notNull": false
+          },
+          "TerritoryDescription": {
+            "name": "TerritoryDescription",
+            "type": "character varying(50)",
+            "primaryKey": false,
+            "notNull": false
+          },
+          "RegionID": {
+            "name": "RegionID",
+            "type": "INT",
+            "primaryKey": false,
+            "notNull": false
+          }
+        },
+        "indexes": {}
+      }
+    },
+    "enums": {}
+  }
