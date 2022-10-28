@@ -1,8 +1,1 @@
-## repository for northwind traders api written using 5 different ORMs:
-- typeorm
-- drizzle
-- prisma
-- knex 
-- kysely
-
-Implementations are in related branches
+## made on drizzle old version(4 months old)
