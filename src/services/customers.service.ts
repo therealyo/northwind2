@@ -4,25 +4,39 @@ import { customers } from './../data/schema'
 
 export class CustomerService extends BaseService {
     getCustomerInfo = async (id: string) => {
-        const customerInfo = await this.db.customers
+        this.logger.setStart()
+        const query = this.db.customers
             .select()
             .where(eq(customers.CustomerID, id))
-            .execute()
+        const customerInfo = await query.execute()
+
+        this.logger.setEnd()
+        this.logger.addQuery(query.getQuery().sql)
 
         return {
+            queries: this.logger.retrieveQueries(),
             data: customerInfo[0]
         }
     }
 
     getCustomersPage = async (page: number) => {
-        const pageData = await this.db.customers
+        this.logger.setStart()
+        const pageQuery = this.db.customers
             .select()
             .limit(this.pageSize)
             .offset(this.pageSize * (page - 1))
-            .execute()
+        const pageData = await pageQuery.execute()
 
-        const count = (await this.db.customers.select().execute()).length;
+        this.logger.setEnd()
+        this.logger.addQuery(pageQuery.getQuery().sql)
+
+        this.logger.setStart()
+        const countQuery = this.db.customers.select()
+        const count = (await countQuery.execute()).length;
+        this.logger.setEnd()
+        this.logger.addQuery(countQuery.getQuery().sql)
         return {
+            queries: this.logger.retrieveQueries(),
             count,
             page: pageData
         }
