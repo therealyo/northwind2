@@ -5,26 +5,38 @@ import { BaseService } from './../types/BaseService'
 
 export class SupplierService extends BaseService {
     getSupplierInfo = async (id: number) => {
-        const supplierInfo = await this.db.suppliers
+        this.logger.setStart()
+        const query = this.db.suppliers
             .select()
             .where(eq(suppliers.SupplierID, id))
-            .execute()
+        const supplierInfo = await query.execute()
+        this.logger.setEnd()
+        this.logger.addQuery(query.getQuery().sql)
 
         return {
+            queries: this.logger.retrieveQueries(),
             data: supplierInfo[0]
         }
     }
 
     getSuppliersPage = async (page: number) => {
-        const pageData = await this.db.suppliers
+        this.logger.setStart()
+        const pageQuery = this.db.suppliers
             .select()
             .limit(this.pageSize)
             .offset(this.pageSize * (page - 1))
-            .execute()
+        const pageData = await pageQuery.execute()
+        this.logger.setEnd()
+        this.logger.addQuery(pageQuery.getQuery().sql)
 
-        const count = (await this.db.suppliers.select().execute()).length
+        this.logger.setStart()
+        const countQuery = this.db.suppliers.select()
+        const count = (await countQuery.execute()).length
+        this.logger.setEnd()
+        this.logger.addQuery(countQuery.getQuery().sql)
 
         return {
+            queries: this.logger.retrieveQueries(),
             count,
             page: pageData
         }
