@@ -1,56 +1,64 @@
-import { ItemInfo } from './../types/ItemInfo'
-import { DB, eq } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 
-import { PageResponse } from '../types/PageResponse'
 import { BaseService } from './../types/BaseService'
-import { Employee, EmployeesTable } from './../data/schema'
 
 export class EmployeeService extends BaseService {
-    private employeesTable?: EmployeesTable
 
-    constructor(db: DB) {
-        super(db)
-        this.initTables(db)
-    }
-
-    private readonly initTables = (db: DB): void => {
-        this.employeesTable = new EmployeesTable(db)
-        this.employeesTable.withLogger(this.logger)
-    }
-
-    getEmployeeInfo = async (id: number): Promise<ItemInfo<Employee>> => {
-        const data = await this.employeesTable!.select()
-            .leftJoin(this.employeesTable!, (employees, joined) => eq(employees.ReportsTo, joined.EmployeeID))
-            .where((employees, joined) => eq(employees.EmployeeID, id))
-            .execute()
-
-        const employeeInfo = data.map((employee, joined) => {
-            return { 
-                ...employee, 
-                ReportsTo: `${joined.FirstName} ${joined.LastName}` 
-            }
-        })[0] as Employee & { ReportsTo: string }
+    getEmployeeInfo = async (id: number) => {
+        this.logger.setStart()
+        const rawQuery = sql`SELECT \
+                                employees."EmployeeID", \
+                                employees."LastName", \
+                                employees."FirstName", \
+                                employees."Title", \ 
+                                employees."TitleOfCourtesy", \
+                                employees."BirthDate", \
+                                employees."HireDate", \
+                                employees."Address", \
+                                employees."City", \
+                                employees."Region", \
+                                employees."PostalCode", \ 
+                                employees."Country", \ 
+                                employees."HomePhone", \
+                                employees."Extension", \
+                                employees."Notes", \
+                                CONCAT(reports."LastName", ' ', reports."FirstName") as "ReportsTo" \
+                            FROM employees \
+                                LEFT JOIN employees AS reports \
+                                    ON employees."ReportsTo"=reports."EmployeeID" \ 
+                                        WHERE employees."EmployeeID"=${id}` 
+        const { rows: employeeInfo } = await this.db.execute(
+            rawQuery
+        )
+        this.logger.setEnd()
+        this.logger.addQuery(rawQuery.getSQL().queryChunks[0].toString().replace(/  +/g, ' '))
 
         return {
             queries: this.logger.retrieveQueries(),
-            data: employeeInfo
+            data: employeeInfo[0]
         }
     }
 
-    getEmployeesPage = async (page: number): Promise<PageResponse<Employee>> => {
-        const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM employees')
-        const count = rows[0].count
-
-        this.logger.addQuery('SELECT COUNT(*) FROM employees')
-
-        const pageData: Employee[] = await this.employeesTable!.select()
+    getEmployeesPage = async (page: number) => {
+        this.logger.setStart()
+        const pageQuery = this.db.employees
+            .select()
             .limit(this.pageSize)
-            .offset((page - 1) * this.pageSize)
-            .execute()
+            .offset(this.pageSize * (page - 1))
+        const pageData = await pageQuery.execute()
+        this.logger.setEnd()
+        this.logger.addQuery(pageQuery.getQuery().sql)
 
-        return { 
-            queries: this.logger.retrieveQueries(), 
-            count, 
-            page: pageData }
+        this.logger.setStart()
+        const countQuery = this.db.employees.select()
+        const count = (await countQuery.execute()).length
+        this.logger.setEnd()
+        this.logger.addQuery(countQuery.getQuery().sql)
+
+        return {
+            queries: this.logger.retrieveQueries(),
+            count,
+            page: pageData
+        }
     }
 }

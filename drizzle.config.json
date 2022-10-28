@@ -1,0 +1,5 @@
+{
+  "dialect": "pg",
+  "out": "./sql",
+  "schema": "./src/data"
+}

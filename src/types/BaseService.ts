@@ -1,12 +1,13 @@
-import { DB } from 'drizzle-orm'
+import { PGDatabase } from 'drizzle-orm-pg'
 import { QueryLogger } from './../utils/QueryLogger'
+import { schema } from './../data/schema';
 
 export class BaseService {
     public pageSize: number = 20
     public logger: QueryLogger
-    protected db: DB
+    protected db: PGDatabase<typeof schema>
 
-    constructor(db: DB) {
+    constructor(db: PGDatabase<typeof schema>) {
         this.logger = new QueryLogger()
         this.db = db
     }

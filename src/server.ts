@@ -1,7 +1,8 @@
 import dotenv from 'dotenv'
+import { connect } from 'drizzle-orm'
+import { connector } from './database/db'
 
 import App from './app'
-import { connection } from './database/db'
 import {
     ProductController,
     CustomerController,
@@ -13,8 +14,7 @@ import {
 dotenv.config()
 
 const start = async () => {
-    const db = await connection
-    // db.useLogger(new QueryLogger());
+    const db = await connect(connector)
     const app = new App(
         [
             new SuppliersController(db),

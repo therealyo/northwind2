@@ -1,9 +1,12 @@
-import { drizzle } from 'drizzle-orm'
+import { PgConnector } from 'drizzle-orm-pg'
+import { Pool } from 'pg'
 import * as dotenv from 'dotenv'
+
+import { schema } from './../data/schema'
 
 dotenv.config()
 
-export const connection = drizzle.connect({
+const pool = new Pool({
     host: process.env.POSTGRES_HOST,
     password: process.env.POSTGRES_PASSWORD,
     user: process.env.POSTGRES_USER,
@@ -13,3 +16,5 @@ export const connection = drizzle.connect({
         rejectUnauthorized: false
     }
 })
+
+export const connector = new PgConnector(pool, schema)

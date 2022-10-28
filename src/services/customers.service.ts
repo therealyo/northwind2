@@ -1,48 +1,44 @@
-import { ItemInfo } from './../types/ItemInfo'
-import { DB, eq } from 'drizzle-orm'
-
-import { PageResponse } from '../types/PageResponse'
+import { eq } from 'drizzle-orm/expressions'
 import { BaseService } from './../types/BaseService'
-import { CustomersTable, Customer } from '../data/schema'
+import { customers } from './../data/schema'
 
 export class CustomerService extends BaseService {
-    private customersTable?: CustomersTable
+    getCustomerInfo = async (id: string) => {
+        this.logger.setStart()
+        const query = this.db.customers
+            .select()
+            .where(eq(customers.CustomerID, id))
+        const customerInfo = await query.execute()
 
-    constructor(db: DB) {
-        super(db)
-        this.initTables(db)
-    }
-
-    private readonly initTables = (db: DB): void => {
-        this.customersTable = new CustomersTable(db)
-        this.customersTable.withLogger(this.logger)
-    }
-
-    getCustomerInfo = async (id: string): Promise<ItemInfo<Customer>> => {
-        const customerInfo: Customer = (
-            await this.customersTable!
-                .select()
-                .where(eq(this.customersTable!.CustomerID, id))
-                .execute()
-        )[0]
+        this.logger.setEnd()
+        this.logger.addQuery(query.getQuery().sql)
 
         return {
             queries: this.logger.retrieveQueries(),
-            data: customerInfo
+            data: customerInfo[0]
         }
     }
 
-    getCustomersPage = async (page: number): Promise<PageResponse<Customer>> => {
-        const { rows } = await this.db.session().execute('SELECT COUNT(*) FROM customers')
-        const count = rows[0].count
-
-        this.logger.addQuery('SELECT COUNT(*) FROM customers')
-
-        const pageData: Customer[] = await this.customersTable!.select()
+    getCustomersPage = async (page: number) => {
+        this.logger.setStart()
+        const pageQuery = this.db.customers
+            .select()
             .limit(this.pageSize)
-            .offset((page - 1) * this.pageSize)
-            .execute()
+            .offset(this.pageSize * (page - 1))
+        const pageData = await pageQuery.execute()
 
-        return { queries: this.logger.retrieveQueries(), count, page: pageData }
+        this.logger.setEnd()
+        this.logger.addQuery(pageQuery.getQuery().sql)
+
+        this.logger.setStart()
+        const countQuery = this.db.customers.select()
+        const count = (await countQuery.execute()).length;
+        this.logger.setEnd()
+        this.logger.addQuery(countQuery.getQuery().sql)
+        return {
+            queries: this.logger.retrieveQueries(),
+            count,
+            page: pageData
+        }
     }
 }

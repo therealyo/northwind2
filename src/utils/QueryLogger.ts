@@ -1,34 +1,54 @@
-import BaseLogger from 'drizzle-orm/logger/abstractLogger'
+import { Metrics } from './Metrics';
+// import BaseLogger from 'drizzle-orm/logger/abstractLogger'
 
-export class QueryLogger extends BaseLogger {
-    queries: string[] = []
+type QueryStats = {
+    query: string, 
+    metrics: Metrics
+}
+export class QueryLogger {
+    queries: QueryStats[] = []
+    startTime: [number, number] = [0, 0];
+    endTime: [number, number] = [0, 0];
 
     private readonly isEmptyString = (str: string) => {
         return str.length === 0
     }
 
-    private readonly parseQuery = (query: string) => {
-        return query.split('\n').slice(1).join(' ').trim().replace(/  +/g, ' ')
+    private readonly countMetrics = (query: string) => {
+        if (!this.isEmptyString(query)) {
+            const metrics = new Metrics(query.toLowerCase(), this.endTime[1] / 1_000_000)
+            this.resetCounter() 
+            return {
+                query: query,
+                metrics
+            }
+        }
     }
 
-    info = (msg: string): void => {
-        const parsed = this.parseQuery(msg)
-        if (!this.isEmptyString(parsed)) {
+    private readonly resetCounter = (): void => {
+        this.startTime = [0, 0]
+        this.endTime = [0, 0]
+    }
+
+    setStart = () => {
+        this.startTime = process.hrtime()
+    }
+
+    setEnd = () => {
+        this.endTime = process.hrtime(this.startTime);
+    }
+
+    addQuery = (query: string): void => {
+        const parsed = this.countMetrics(query)
+        if (parsed) {
             this.queries.push(parsed)
         }
     }
 
-    error(msg: string): void {
-        console.log(msg)
-    }
-
-    addQuery = (query: string): void => {
-        this.queries.push(query.replace(/  +/g, ' '))
-    }
-
-    retrieveQueries = (): string[] => {
+    retrieveQueries = (): QueryStats[] => {
         const temp = [...this.queries]
         this.queries = []
+        // this.resetCounter()
         return temp
     }
 }
