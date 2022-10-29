@@ -58,4 +58,17 @@ export class ProductService extends BaseService {
             page: pageData 
         }
     }
+
+    searchProduct = async (search: string) => {
+        const searchResult = await this.db
+            .queryBuilder()
+            .select()
+            .from('products')
+            .whereRaw(`products."products_ranking" @@ to_tsquery('${search + ':*'}')`)
+            .orderByRaw(`ts_rank("products_ranking", to_tsquery('${search + ':*'}')) DESC`)
+            
+        return {
+            data: searchResult
+        }
+    }
 }

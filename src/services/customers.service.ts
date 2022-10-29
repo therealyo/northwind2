@@ -1,18 +1,14 @@
-import { Knex } from 'knex';
+import { Knex } from 'knex'
 
 import { BaseService } from './../types/BaseService'
 
 export class CustomerService extends BaseService {
-
     constructor(db: Knex) {
         super(db)
     }
 
     getCustomerInfo = async (id: string) => {
-        const infoQuery = this.db.queryBuilder()
-        .select()
-        .from("customers")
-        .where({"CustomerID": id})
+        const infoQuery = this.db.queryBuilder().select().from('customers').where({ CustomerID: id })
 
         this.logger.addQuery(infoQuery.toQuery())
         const customerInfo = await infoQuery.first()
@@ -39,10 +35,23 @@ export class CustomerService extends BaseService {
         this.logger.addQuery(pageQuery.toQuery())
         const pageData = await pageQuery
 
-        return { 
-            queries: this.logger.retrieveQueries(), 
-            count, 
-            page: pageData 
+        return {
+            queries: this.logger.retrieveQueries(),
+            count,
+            page: pageData
+        }
+    }
+
+    searchCustomer = async (search: string) => {
+        const searchResult = await this.db
+            .queryBuilder()
+            .select()
+            .from('customers')
+            .whereRaw(`customers."customers_with_rankings" @@ to_tsquery('${search + ':*'}')`)
+            .orderByRaw(`ts_rank("customers_with_rankings", to_tsquery('${search + ':*'}')) DESC`)
+            
+        return {
+            data: searchResult
         }
     }
 }
