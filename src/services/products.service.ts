@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import { eq } from 'drizzle-orm/expressions'
 import { products, suppliers } from './../data/schema'
 import { BaseService } from './../types/BaseService'
@@ -46,6 +47,23 @@ export class ProductService extends BaseService {
             queries: this.logger.retrieveQueries(),
             count,
             page: pageData
+        }
+    }
+
+    searchProduct = async (searchValue: string) => {
+        this.logger.setStart()
+        const searchQuery = this.db.products
+            .select()
+            .where(
+                sql`products."products_ranking" @@ to_tsquery(${searchValue + ":*"})` 
+            )
+        const searchResult = await searchQuery.execute()
+        this.logger.setEnd()
+        this.logger.addQuery(searchQuery.getQuery().sql)
+
+        return {
+            queries: this.logger.retrieveQueries(),
+            data: searchResult
         }
     }
 }
