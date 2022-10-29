@@ -1,4 +1,4 @@
-import { Kysely } from 'kysely'
+import { Kysely, sql } from 'kysely'
 import { DB } from 'kysely-codegen'
 import { BaseService } from './../types/BaseService'
 
@@ -31,6 +31,17 @@ export class CustomerService extends BaseService {
         return {
             count: count.length,
             page: pageData
+        }
+    }
+    searchCustomer = async (search: string) => {
+        const searchResult = await this.db
+            .selectFrom("customers")
+            .selectAll()
+            .where(sql`customers."customers_with_rankings" @@ to_tsquery('${search + ':*'}')`)
+            .execute()
+
+        return {
+            data: searchResult
         }
     }
 }

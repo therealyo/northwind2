@@ -1,7 +1,7 @@
 import { Kysely } from 'kysely';
 import { NextFunction, Request, Response, Router } from 'express'
 
-import { singleItemValidation, pageValidation } from '../validation/query.validation'
+import { singleItemValidation, pageValidation, searchValidation } from '../validation/query.validation'
 import { ApiError } from './../errors/ApiError'
 import { Controller } from './../interfaces/IController'
 import { CustomerService } from './../services'
@@ -19,6 +19,7 @@ export class CustomerController implements Controller {
     private readonly initRoutes = () => {
         this.router.get('/customer', singleItemValidation, this.getSupplierInfo)
         this.router.get('/customers', pageValidation, this.getSuppliersPage)
+        this.router.get('/searchCustomer', searchValidation, this.searchCustomer)
     }
 
     private readonly getSuppliersPage = async (req: Request, res: Response, next: NextFunction) => {
@@ -42,6 +43,22 @@ export class CustomerController implements Controller {
             }
 
             const data = await this.service.getCustomerInfo(id)
+
+            res.status(200).json(data)
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    private readonly searchCustomer = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { search } = req.query
+
+            if (typeof search !== 'string') {
+                throw new ApiError(400, 'Wrong query parameters')
+            }
+
+            const data = await this.service.searchCustomer(search)
 
             res.status(200).json(data)
         } catch (err) {

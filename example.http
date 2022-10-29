@@ -14,11 +14,19 @@ GET http://localhost:3000/customer?id=ALFKI HTTP/1.1
 
 ###
 
+GET http://localhost:3000/searchCustomer?search=Alfred HTTP/1.1
+
+###
+
 GET http://localhost:3000/products?page=1 HTTP/1.1
 
 ###
 
 GET http://localhost:3000/product?id=1 HTTP/1.1
+
+###
+
+GET http://localhost:3000/searchProduct?search=Chai HTTP/1.1
 
 ###
 
