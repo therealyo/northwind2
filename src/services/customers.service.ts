@@ -1,11 +1,7 @@
-import { ItemInfo } from './../types/ItemInfo'
-// import { DB, eq } from 'drizzle-orm'
-
-import { PageResponse } from '../types/PageResponse'
-import { BaseService } from './../types/BaseService'
 import { DataSource } from 'typeorm'
+
 import { Customers } from '../entities'
-// import { CustomersTable, Customer } from '../data/schema'
+import { BaseService } from './../types/BaseService'
 
 export class CustomerService extends BaseService {
     constructor(db: DataSource) {
@@ -37,7 +33,20 @@ export class CustomerService extends BaseService {
 
         this.logger.addQuery('SELECT COUNT(*) FROM customers')
         this.logger.addQuery(pageQueryBuilder.getQuery())
-        
+
         return { queries: this.logger.retrieveQueries(), count, page: pageData }
+    }
+
+    searchCustomer = async (search: string) => {
+        const searchResult = await this.db
+            .createQueryBuilder(Customers, 'customers')
+            .select()
+            .where(`customers."customers_with_rankings" @@ to_tsquery('${search + ':*'}')`)
+            .orderBy(`ts_rank("customers_with_rankings", to_tsquery('${search + ':*'}'))`, 'DESC')
+            .getMany()
+
+        return {
+            data: searchResult
+        }
     }
 }

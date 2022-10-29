@@ -2,9 +2,9 @@ import { DataSource } from 'typeorm'
 
 import { BaseService } from './../types/BaseService'
 import { Products } from './../entities/Products'
-import { Suppliers } from '../entities/Suppliers'
 
 export class ProductService extends BaseService {
+    
     constructor(db: DataSource) {
         super(db)
     }
@@ -36,5 +36,18 @@ export class ProductService extends BaseService {
         this.logger.addQuery(pageQueryBuilder.getQuery())
 
         return { queries: this.logger.retrieveQueries(), count, page: pageData }
+    }
+
+    searchProduct = async (search: string) => {
+        const searchResult = await this.db
+        .createQueryBuilder(Products, 'products')
+        .select()
+        .where(`products."products_ranking" @@ to_tsquery('${search + ':*'}')`)
+        .orderBy(`ts_rank("products_ranking", to_tsquery('${search + ':*'}'))`, 'DESC')
+        .getMany()
+
+        return {
+            data: searchResult
+        }
     }
 }

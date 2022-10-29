@@ -2,7 +2,7 @@ import "reflect-metadata"
 import dotenv from 'dotenv'
 
 import App from './app'
-// import { connection } from './database/db'
+
 import {
     ProductController,
     CustomerController,
@@ -16,7 +16,6 @@ dotenv.config()
 
 const start = async () => {
     const db = await connection.initialize();
-    // // db.useLogger(new QueryLogger());
     const app = new App(
         [
             new SuppliersController(db),
