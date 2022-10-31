@@ -22,7 +22,8 @@ export class EmployeeService extends BaseService {
                                 employees."HomePhone", \
                                 employees."Extension", \
                                 employees."Notes", \
-                                CONCAT(reports."LastName", ' ', reports."FirstName") as "ReportsTo" \
+                                employees."ReportsTo", \
+                                CONCAT(reports."LastName", ' ', reports."FirstName") as "ReportsToFullName" \
                             FROM employees \
                                 LEFT JOIN employees AS reports \
                                     ON employees."ReportsTo"=reports."EmployeeID" \ 
