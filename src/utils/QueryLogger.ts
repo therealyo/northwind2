@@ -3,7 +3,10 @@ import { Metrics } from './Metrics';
 
 type QueryStats = {
     query: string, 
-    metrics: Metrics
+    select: number
+    selectWhere: number
+    selectJoin: number
+    executionTime?: number
 }
 export class QueryLogger {
     queries: QueryStats[] = []
@@ -20,7 +23,7 @@ export class QueryLogger {
             this.resetCounter() 
             return {
                 query: query,
-                metrics
+                ...metrics
             }
         }
     }
@@ -48,7 +51,6 @@ export class QueryLogger {
     retrieveQueries = (): QueryStats[] => {
         const temp = [...this.queries]
         this.queries = []
-        // this.resetCounter()
         return temp
     }
 }

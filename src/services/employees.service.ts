@@ -52,14 +52,17 @@ export class EmployeeService extends BaseService {
 
         this.logger.setStart()
         const countQuery = this.db.employees.select()
-        const count = (await countQuery.execute()).length
+        const total = (await countQuery.execute()).length
         this.logger.setEnd()
         this.logger.addQuery(countQuery.getQuery().sql)
 
         return {
             queries: this.logger.retrieveQueries(),
-            count,
-            page: pageData
+            total,
+            page,
+            pages: Math.ceil(total / this.pageSize),
+            items: this.pageSize,
+            data: pageData
         }
     }
 }

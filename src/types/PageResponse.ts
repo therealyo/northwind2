@@ -1,5 +1,5 @@
 export interface PageResponse<T> {
     queries: string[]
-    count: string
+    total: string
     page: T[]
 }

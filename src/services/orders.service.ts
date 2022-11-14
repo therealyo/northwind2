@@ -49,14 +49,17 @@ export class OrderService extends BaseService {
         
         this.logger.setStart()
         const countQuery = this.db.orders.select()
-        const count = (await countQuery.execute()).length
+        const total = (await countQuery.execute()).length
         this.logger.setEnd()
         this.logger.addQuery(countQuery.getQuery().sql)
 
         return {
             queries: this.logger.retrieveQueries(),
-            count,
-            page: pageData
+            total,
+            page,
+            pages: Math.ceil(total / this.pageSize),
+            items: this.pageSize,
+            data: pageData
         }
     }
 
@@ -71,7 +74,7 @@ export class OrderService extends BaseService {
                 }
             })
             .reduce((prev, order) => ({
-                // count total price of all orders
+                // total total price of all orders
                 ...prev,
                 TotalPrice: prev.TotalPrice + order.TotalPrice
             }))
