@@ -1,0 +1,15 @@
+
+version: "3.9"
+services:
+  main:
+    restart: always
+    build: .
+    expose:
+      - "80"
+    env_file:
+      - .env
+    # environment:
+    #   - VIRTUAL_HOST=rocksolid.vps.webdock.io
+    #   - LETSENCRYPT_HOST=rocksolid.vps.webdock.io
+    ports:
+      - "5000:5000"
